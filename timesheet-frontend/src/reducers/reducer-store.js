@@ -1,86 +1,51 @@
-import React from 'react';
 import * as actionTypes from '../action/actionTypes';
+import * as ApiService from '../services/ApiService';
+
 
 const initialState = {
-    curr_timeSheet: [{
-        "day" : "Sunday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Monday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Tuesday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Wednesday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Thursday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Friday",
-        "date": "2021-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T07:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": false
-    },
-    {
-        "day" : "Saturday",
-        "date": "2025-01-17T07:00:00.000Z",
-        "startingTime": "2021-01-17T07:00:00.000Z",
-        "endingTime": "2021-01-17T14:00:00.000Z",
-        "isFloatingDay": false,
-        "isHoliday": false,
-        "isVacation": true,
-    }
-    
-    ]
+    weeklyTimesheets: [],
+    timesheetTemplate: [],
+    curr_timeSheet: []
 }
 
-const editTimesheet = (state, action) => {
+// const setWeeklyTimesheet = (state) => {
+    
+// }
+
+const setTimesheetTemplate = (state, action) =>{
+    return {
+        ...state,
+        timesheetTemplate: action.payload
+    }
+}
+
+
+const setCurrTimesheet = (state, action) => {
     return {
         ...state,
         curr_timeSheet: action.payload
     }
 }
 
+const postTemplate = (state) => {
+    ApiService.postTemplate(state.timesheetTemplate)
+    return {
+        ...state
+    }
+}
+
 export default function appReducer(state = initialState, action) {
     switch (action.type){
-        case actionTypes.EDIT_TIMESHEET:
-            return editTimesheet(state, action);
 
+        case actionTypes.EDIT_TIMESHEET:
+            return setCurrTimesheet(state, action);
+        
+        case actionTypes.GET_TIMESHEET_TEMPLATE:
+            return setTimesheetTemplate(state, action);
+        
+        case actionTypes.POST_TIMESHEET_TEMPLATE:
+            return postTemplate(state);
+        
         default:
             return state;
 
