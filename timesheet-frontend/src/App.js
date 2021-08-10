@@ -8,9 +8,6 @@ function App() {
     <Routes>
       <Route path='/timesheet/edit' element={<TimeSheetHome/>}></Route>
     </Routes>
-    // <div className="TimeSheetHome">
-    //   <TimeSheetHome></TimeSheetHome>
-    // </div>
   );
 }
 

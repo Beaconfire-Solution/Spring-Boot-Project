@@ -1,46 +1,53 @@
 import {React, useState, useEffect} from 'react';
-import { TextField, Checkbox, Button, makeStyles } from '@material-ui/core';
+import { TextField, Checkbox, Button, makeStyles, TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Paper,
+    InputLabel, MenuItem , FormControl , Select } from '@material-ui/core';
+// import { KeyboardTimePicker , MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { connect } from 'react-redux';
 import * as actionTypes from '../../action/actionTypes';
 import TimeSheetHomeCSS from './TimeSheetHome.module.css';
 import * as ApiService from '../../services/ApiService';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+// import DateFnsUtils from '@date-io/date-fns';
 
 
 function TimeSheetHome(props) {
 
     const [isValid, setValid] = useState(true);
+    const [newTimesheet, setNewTimesheet] = useState([]);
 
-    function getTimesheetTemplate(){
-        ApiService.fetchTimesheetTemplate()
+    function getWeeklyTimesheets(){
+        ApiService.fetchAllTimesheets()
         .then((response)=>{
-            props.getTimesheetTemplate(response.data.template);
+            props.getWeeklyTimesheets(response.data[0].weeklyTimesheets);
+            setNewTimesheet(response.data[0].weeklyTimesheets);
         })
     }
-
+    
+    
     useEffect(() => {
-        getTimesheetTemplate();
-    })
+        getWeeklyTimesheets();
+        // console.log(newTimesheet);
+    },[])
 
     function testChange(){
-        props.postTemplate();
+        ApiService.postTemplate(newTimesheet.dailyTimesheets);
     }
-    const useStyles = makeStyles({
+    const useStyles = makeStyles((theme)=>({
         table: {
           minWidth: 650,
         },
-      });
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 520,
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
+      }));
     const classes = useStyles();
 
     function totalHoursCalc(startingTime, endingTime){
-        var timeStart = new Date("01/01/2007 " + startingTime);
-        var timeEnd = new Date("01/01/2007 " + endingTime);
+        var timeStart = new Date('01/07/2007 ' + startingTime);
+        var timeEnd = new Date('01/07/2007 ' + endingTime);
         var hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
         hourDiff = hourDiff.toFixed(2);
         if (hourDiff >= 0){
@@ -58,8 +65,76 @@ function TimeSheetHome(props) {
         }
     }
 
+    function handleStartingTimeChange(index, e){
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        let row = {...changedTimesheet[index]};
+        row.startingTime = e.target.value;
+        changedTimesheet[index] = row;
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
+    }
+
+    function handleEndingTimeChange(index, e){
+        console.log(e.target.value);
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        let row = {...changedTimesheet[index]};
+        row.endingTime = e.target.value;
+        changedTimesheet[index] = row;
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
+    }
+
+    function handleFloatingDayChange(index, e){
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        let row = {...changedTimesheet[index]};
+        row.floatingDay = e.target.checked;
+        changedTimesheet[index] = row;
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
+    }
+
+    function handleVacationChange(index, e){
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        let row = {...changedTimesheet[index]};
+        row.vacation = e.target.checked;
+        changedTimesheet[index] = row;
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
+    }
+
+    function handleHolidayChange(index, e){
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        let row = {...changedTimesheet[index]};
+        row.holiday = e.target.checked;
+        changedTimesheet[index] = row;
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
+    }
+    // add mode edit/view
     return (
         <div className={TimeSheetHomeCSS.container}>
+            <div>
+            <FormControl variant="filled" className={classes.formControl}>
+            <InputLabel id="demo-simple-select-filled-label">{newTimesheet.weekEnding}</InputLabel>
+                <Select
+                    labelId="demo-simple-select-filled-label"
+                    id="demo-simple-select-filled"
+                    // value={newTimesheet.weekEnding}
+                    // onChange={handleChange}
+                    >
+                    <MenuItem value={10}>{newTimesheet.weekEnding}</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+            </FormControl>
+            </div>
+            <br></br>
+            <br></br>
             <div>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
@@ -76,37 +151,47 @@ function TimeSheetHome(props) {
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {props.timesheetTemplate.map((row) => (
+                    {newTimesheet.dailyTimesheets && newTimesheet.dailyTimesheets.map((row, index) => (
                         <TableRow key={row.day}>
                         <TableCell component="th" scope="row">
                             {row.day}
                         </TableCell>
                         <TableCell align="center">{row.date}</TableCell>
                         <TableCell align="center">
-                            <TextField
-                                id="time"
-                                type="time"
-                                defaultValue={row.startingTime}
-                                InputLabelProps={{
-                                shrink: true,
-                                }}
-                                inputProps={{
-                                step: 300, // 5 min
-                                }}
-                        />
+                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
+                        <TextField
+                                    id="time"
+                                    type="time"
+                                    defaultValue={row.startingTime}
+                                    onChange={(e)=>handleStartingTimeChange(index, e)}
+                                    InputLabelProps={{
+                                    shrink: true,
+                                    }}
+                                    minutesStep={10}
+                                    inputProps={{
+                                    step: 300, // 5 min
+                                    }}
+                            />
+                        {/* <KeyboardTimePicker value={row.startingTime} mask="__:__ _M" onChange={(e)=>handleStartingTimeChange(index, e)} minutesStep={30} /> */}
+                        {/* </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
                             <TextField
                                     id="time"
                                     type="time"
                                     defaultValue={row.endingTime}
+                                    onChange={(e)=>handleEndingTimeChange(index, e)}
                                     InputLabelProps={{
                                     shrink: true,
                                     }}
+                                    minutesStep={10}
                                     inputProps={{
                                     step: 300, // 5 min
                                     }}
                             />
+                            {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <KeyboardTimePicker mask="__:__ _M" value={row.endingTime} onChange={(e)=>handleEndingTimeChange(index, e)} minutesStep={30} />
+                            </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
                             
@@ -115,20 +200,26 @@ function TimeSheetHome(props) {
                         </TableCell>
                         <TableCell align="center">
                             <Checkbox
-                                checked={row.isFloatingDay}
+                                checked={row.floatingDay}
+                                onChange={(e)=>handleFloatingDayChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
+                                disabled={row.holiday || row.vacation}
                             />
                         </TableCell>
                         <TableCell align="center">
                             <Checkbox
-                                checked={row.isHoliday}
+                                checked={row.holiday}
+                                onChange={(e)=>handleHolidayChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
+                                disabled={row.vacation || row.floatingDay}
                             />
                         </TableCell>
                         <TableCell align="center">
                             <Checkbox
-                                checked={row.isVacation}
+                                checked={row.vacation}
+                                onChange={(e)=>handleVacationChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
+                                disabled={row.holiday || row.floatingDay}
                             />
                         </TableCell>
                         </TableRow>
@@ -148,8 +239,9 @@ function TimeSheetHome(props) {
 
 const mapStateToProps = (state)=>{
     return {
-        timesheet: state.curr_timeSheet,
-        timesheetTemplate: state.timesheetTemplate
+        curr_timesheet: state.curr_timeSheet,
+        timesheetTemplate: state.timesheetTemplate,
+        weeklyTimesheets: state.weeklyTimesheets,
     }
 }
 
@@ -157,7 +249,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         postTemplate: () => dispatch({type: actionTypes.POST_TIMESHEET_TEMPLATE}),
         editTimesheet: (payload) => dispatch({type: actionTypes.EDIT_TIMESHEET, payload}),
-        getTimesheetTemplate: (payload) => dispatch({type: actionTypes.GET_TIMESHEET_TEMPLATE, payload})
+        getWeeklyTimesheets: (payload) => dispatch({type: actionTypes.GET_WEEKLYTIMESHEETS, payload})
     }
 }
 
