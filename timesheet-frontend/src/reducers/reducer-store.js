@@ -8,9 +8,12 @@ const initialState = {
     curr_timeSheet: []
 }
 
-// const setWeeklyTimesheet = (state) => {
-    
-// }
+const setWeeklyTimesheet = (state, action) => {
+    return {
+        ...state,
+        weeklyTimesheets: action.payload
+    }
+}
 
 const setTimesheetTemplate = (state, action) =>{
     return {
@@ -46,6 +49,9 @@ export default function appReducer(state = initialState, action) {
         case actionTypes.POST_TIMESHEET_TEMPLATE:
             return postTemplate(state);
         
+        case actionTypes.GET_WEEKLYTIMESHEETS:
+            return setWeeklyTimesheet(state, action);
+
         default:
             return state;
 
