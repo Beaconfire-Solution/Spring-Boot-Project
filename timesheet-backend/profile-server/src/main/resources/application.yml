@@ -2,6 +2,10 @@ spring:
   application:
     name: profile-server
 
+  data:
+    mongodb:
+      uri: mongodb+srv://root:LXF1215@cluster0.cma0f.mongodb.net/demoDB?retryWrites=true&w=majority
+
 server:
   port: 11000
 

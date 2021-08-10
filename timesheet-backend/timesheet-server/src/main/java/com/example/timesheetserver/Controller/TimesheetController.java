@@ -1,10 +1,7 @@
 package com.example.timesheetserver.Controller;
 
 import com.example.timesheetserver.DAO.TimesheetRepository;
-import com.example.timesheetserver.Domain.Document;
-import com.example.timesheetserver.Domain.Profile;
-import com.example.timesheetserver.Domain.Timesheet;
-import com.example.timesheetserver.Domain.Timesheets;
+import com.example.timesheetserver.Domain.*;
 import com.example.timesheetserver.Service.ProfileService;
 import com.example.timesheetserver.Service.TimesheetService;
 import com.example.timesheetserver.Util.CurrentTime;
@@ -28,12 +25,6 @@ public class TimesheetController {
     @Autowired
     ProfileService profileService;
 
-    @CrossOrigin
-    @GetMapping("/timesheets/{id}")
-    public ResponseEntity getTimesheets(@PathVariable String id){
-        //System.out.println(timesheetService.findByProfile_Id(id));
-        return ResponseEntity.ok(timesheetService.findByProfile_Id(id));
-    }
 
     @CrossOrigin
     @GetMapping("/timesheets")
@@ -43,10 +34,24 @@ public class TimesheetController {
     }
 
     @CrossOrigin
-    @PostMapping("/timesheets/{id}")
-    public ResponseEntity saveTimesheets(@RequestBody Timesheet timesheet){
-        timesheetService.save(timesheet);
+    @GetMapping("/timesheets/{id}")
+    public ResponseEntity getTimesheetsByProfileId(@PathVariable String id){
+        //System.out.println(timesheetService.findByProfile_Id(id));
+        return ResponseEntity.ok(timesheetService.findByProfile_Id(id));
+    }
+
+    @CrossOrigin
+    @PutMapping("/timesheets/{id}")
+    public ResponseEntity updateTimesheet(@PathVariable String id, @RequestBody Timesheets weeklyTimesheets){
+        timesheetService.updateTimesheet(id, weeklyTimesheets);
         return ResponseEntity.ok("Save Succeed!");
+    }
+
+    @CrossOrigin
+    @PutMapping("/template/{id}")
+    public ResponseEntity updateTemplate(@PathVariable String id, @RequestBody List<DailyTimesheet> template){
+        profileService.updateTemplate(id, template);
+        return ResponseEntity.ok("Update Succeed!");
     }
 
     @CrossOrigin

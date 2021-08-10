@@ -1,6 +1,6 @@
-package com.example.timesheetserver.DAO;
+package com.example.profileserver.DAO;
 
-import com.example.timesheetserver.Domain.Profile;
+import com.example.profileserver.Domain.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

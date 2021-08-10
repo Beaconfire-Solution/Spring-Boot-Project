@@ -25,6 +25,8 @@ public class Profile {
 
     private Contact contact;
 
-    private List<EmergencyContacts> emergencyContactList;
+    private List<EmergencyContacts> emergencyContacts;
+
+    private List<DailyTimesheet> template;
 
 }
