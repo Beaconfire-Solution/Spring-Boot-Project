@@ -10,9 +10,6 @@ function App() {
       <Route path='/timesheet/edit' element={<TimeSheetHome/>}></Route>
       <Route path='/profile/edit' element={<Profile/>}></Route>
     </Routes>
-    // <div className="TimeSheetHome">
-    //   <TimeSheetHome></TimeSheetHome>
-    // </div>
   );
 }
 
