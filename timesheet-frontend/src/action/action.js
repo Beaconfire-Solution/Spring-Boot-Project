@@ -1,9 +1,8 @@
 import * as actionType from './actionTypes';
-import { fetchWeeklyTimesheets} from '../services/ApiService';
-
+import { fetchAllTimesheets } from '../services/ApiService'
 
 export const getTimesheetSummary = () => (dispatch) => {
-    return fetchWeeklyTimesheets()
+    return fetchAllTimesheets()
     .then((response) => 
     {
         dispatch({type: actionType.GET_TIMESHEET_SUMMARY, payload: response.data});

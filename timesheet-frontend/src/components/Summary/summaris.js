@@ -86,16 +86,16 @@ class Summaries extends Component {
                     <tbody>
                         {this.state.currentWeeklyTimesheets.map(week => (
                             <tr key={week.id}>
-                                <td>{week.weekEnding}</td>
-                                <td>{week.totalHours}</td>
+                                <td>{week.weeklyTimesheets.weekEnding}</td>
+                                <td>{week.weeklyTimesheets.totalBillingHours}</td>
                                 <td>
-                                    {week.submissionStatus}<span> </span>
-                                    {this.showInfoIcon({ status: week.submissionStatus })}
+                                    {week.weeklyTimesheets.submissionStatus}<span> </span>
+                                    {this.showInfoIcon({ status: week.weeklyTimesheets.submissionStatus })}
                                     <ReactTooltip id="submissionTip" place="top" effect="solid">
                                         This is submission tip
                                     </ReactTooltip>
                                 </td>
-                                <td>{week.approvalStatus}</td>
+                                <td>{week.weeklyTimesheets.approvedStatus}</td>
                                 <td>{this.optionTags({ week: week })}</td>
                                 <td>{week.comment}
                                     {this.showInfoIcon({ status: week.submissionStatus })}
@@ -121,9 +121,9 @@ class Summaries extends Component {
 }
 const mapStateToProps = (state) => {
     console.log("mapStateToProps called")
-    console.log(state.summaryTimesheets.lists)
+    console.log(state.summaryTimesheets)
     return {
-        timesheetSummaries: state.summaryTimesheets.lists
+        timesheetSummaries: state.summaryTimesheets
     }
 }
 
