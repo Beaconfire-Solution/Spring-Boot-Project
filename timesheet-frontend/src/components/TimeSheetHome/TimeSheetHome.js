@@ -1,49 +1,80 @@
 import {React, useState, useEffect} from 'react';
 import { TextField, Checkbox, Button, makeStyles, TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Paper,
-    InputLabel, MenuItem , FormControl , Select } from '@material-ui/core';
+    InputLabel, MenuItem , FormControl , Select, Grid } from '@material-ui/core';
 // import { KeyboardTimePicker , MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { connect } from 'react-redux';
 import * as actionTypes from '../../action/actionTypes';
 import TimeSheetHomeCSS from './TimeSheetHome.module.css';
 import * as ApiService from '../../services/ApiService';
-// import DateFnsUtils from '@date-io/date-fns';
+import { format } from 'date-fns';
 
 
 function TimeSheetHome(props) {
 
     const [isValid, setValid] = useState(true);
     const [newTimesheet, setNewTimesheet] = useState([]);
+    const [isApproved, setApproved] = useState(false);
+    const [floatingDayCheck, setFloatingDayCheck] = useState(true);
+    const [vacationCheck, setVacationCheck] = useState(true);
+    const [selectedDocument, setDocument] = useState(null);
 
-    function getWeeklyTimesheets(){
-        ApiService.fetchAllTimesheets()
-        .then((response)=>{
-            props.getWeeklyTimesheets(response.data[0].weeklyTimesheets);
-            setNewTimesheet(response.data[0].weeklyTimesheets);
-        })
-    }
-    
-    
     useEffect(() => {
+        const getWeeklyTimesheets = () => {
+            ApiService.fetchAllTimesheets()
+            .then((response)=>{
+                props.getWeeklyTimesheets(response.data[0].weeklyTimesheets);
+                setNewTimesheet(props.weeklyTimesheets);
+                console.log(newTimesheet);
+            })
+        }
         getWeeklyTimesheets();
-        // console.log(newTimesheet);
-    },[])
+        console.log(newTimesheet.approvedStatus);
+        if (newTimesheet.approvedStatus === "N/A"){
+            setApproved(true);
+        }
+        
 
-    function testChange(){
+    },newTimesheet.weekEnding)
+
+    function postTemplate(){
         ApiService.postTemplate(newTimesheet.dailyTimesheets);
     }
+
+    function postWeeklyTimesheet(){
+        ApiService.postWeeklyTimesheet(newTimesheet);
+    }
+
+    const uploadDocument = () => {
+        ApiService.uploadFile(selectedDocument);
+    }
+
+    const handleFileInput = (e) => {
+        setDocument(e.target.files[0]);
+    }
+
+
     const useStyles = makeStyles((theme)=>({
         table: {
           minWidth: 650,
         },
         formControl: {
+            margin: theme.spacing(0),
+            minWidth: 220,
+        },
+        formControlMed: {
             margin: theme.spacing(1),
-            minWidth: 520,
+            minWidth: 300,
         },
         selectEmpty: {
             marginTop: theme.spacing(2),
         },
+        label: {
+            backgroundColor: "white"
+        }
       }));
     const classes = useStyles();
+
+    //setsubmissionstatus
 
     function totalHoursCalc(startingTime, endingTime){
         var timeStart = new Date('01/07/2007 ' + startingTime);
@@ -69,6 +100,12 @@ function TimeSheetHome(props) {
         let changedTimesheet = [...newTimesheet.dailyTimesheets];
         let row = {...changedTimesheet[index]};
         row.startingTime = e.target.value;
+        var timeStart = new Date('01/07/2007 ' + row.startingTime);
+        var timeEnd = new Date('01/07/2007 ' + row.endingTime);
+        if (timeEnd < timeStart)
+            setValid(false);
+        else 
+            setValid(true);
         changedTimesheet[index] = row;
         setNewTimesheet({
             ...newTimesheet,
@@ -80,6 +117,12 @@ function TimeSheetHome(props) {
         let changedTimesheet = [...newTimesheet.dailyTimesheets];
         let row = {...changedTimesheet[index]};
         row.endingTime = e.target.value;
+        var timeStart = new Date('01/07/2007 ' + row.startingTime);
+        var timeEnd = new Date('01/07/2007 ' + row.endingTime);
+        if (timeEnd < timeStart)
+            setValid(false);
+        else 
+            setValid(true);
         changedTimesheet[index] = row;
         setNewTimesheet({
             ...newTimesheet,
@@ -115,24 +158,86 @@ function TimeSheetHome(props) {
             ...newTimesheet,
             dailyTimesheets: changedTimesheet});
     }
+
+    function setDocumentType(e){
+        let newDocument = newTimesheet.document;
+        newDocument.type = e.target.value;
+        setNewTimesheet({
+            ...newTimesheet,
+            document: newDocument
+        });
+    }
+
+    function dateFormatter(date){
+        return format(new Date(date), 'yyyy/MM/dd')
+    }
+
+    function weekEndingFormatter(weekEnding){
+        return format(new Date(weekEnding), 'dd MMMM yyyy')
+    }
+
     // add mode edit/view
     return (
         <div className={TimeSheetHomeCSS.container}>
             <div>
-            <FormControl variant="filled" className={classes.formControl}>
-            <InputLabel id="demo-simple-select-filled-label">{newTimesheet.weekEnding}</InputLabel>
-                <Select
-                    labelId="demo-simple-select-filled-label"
-                    id="demo-simple-select-filled"
-                    // value={newTimesheet.weekEnding}
-                    // onChange={handleChange}
-                    >
-                    <MenuItem value={10}>{newTimesheet.weekEnding}</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-            </FormControl>
+                <Grid
+                container
+                direction="row"
+                justifyContent="space-between"
+                alignItems="flex-start"
+                >
+                <FormControl variant="filled" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-filled-label" shrink={true}>Week Ending</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={newTimesheet.weekEnding}
+                        displayEmpty
+                        renderValue={(value)=> { 
+                            if (value === undefined) 
+                                return newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)
+                            else
+                                return value
+                        }}
+                        >
+                        <MenuItem value={newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)}>{newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)}</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                </FormControl>
+                <TextField
+                    id="filled-disabled"
+                    label="Total Billing Hours"
+                    value={newTimesheet.totalBillingHours}
+                    InputLabelProps={{
+                        shrink: true,
+                      }}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    variant="filled"
+                    />
+                <TextField
+                    id="filled-read-only-input"
+                    label="Total Compensated Hours"
+                    value={newTimesheet.totalCompensatedHours}
+                    InputLabelProps={{
+                        shrink: true,
+                      }}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    variant="filled"
+                />
+            </Grid>
             </div>
+            <br></br>
+            <br></br>
+            <Grid container direction="row" alignItems="center" justifyContent="flex-end">
+                    <Button variant="contained" color="primary" onClick={postTemplate} disabled={!isValid}>
+                        Set Default
+                    </Button>
+            </Grid>
             <br></br>
             <br></br>
             <div>
@@ -156,7 +261,8 @@ function TimeSheetHome(props) {
                         <TableCell component="th" scope="row">
                             {row.day}
                         </TableCell>
-                        <TableCell align="center">{row.date}</TableCell>
+                        <TableCell align="center">{dateFormatter(row.date)}
+                        </TableCell>
                         <TableCell align="center">
                         {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
                         <TextField
@@ -167,10 +273,10 @@ function TimeSheetHome(props) {
                                     InputLabelProps={{
                                     shrink: true,
                                     }}
-                                    minutesStep={10}
                                     inputProps={{
                                     step: 300, // 5 min
                                     }}
+                                    disabled={isApproved}
                             />
                         {/* <KeyboardTimePicker value={row.startingTime} mask="__:__ _M" onChange={(e)=>handleStartingTimeChange(index, e)} minutesStep={30} /> */}
                         {/* </MuiPickersUtilsProvider> */}
@@ -184,17 +290,17 @@ function TimeSheetHome(props) {
                                     InputLabelProps={{
                                     shrink: true,
                                     }}
-                                    minutesStep={10}
                                     inputProps={{
                                     step: 300, // 5 min
                                     }}
+                                    disabled={isApproved}
                             />
                             {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <KeyboardTimePicker mask="__:__ _M" value={row.endingTime} onChange={(e)=>handleEndingTimeChange(index, e)} minutesStep={30} />
                             </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
-                            
+                                {/* {newTimesheet.totalBillingHours} */}
                                 {totalHoursCalc(row.startingTime, row.endingTime)}
                             
                         </TableCell>
@@ -203,7 +309,7 @@ function TimeSheetHome(props) {
                                 checked={row.floatingDay}
                                 onChange={(e)=>handleFloatingDayChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
-                                disabled={row.holiday || row.vacation}
+                                disabled={row.holiday || row.vacation || isApproved || !floatingDayCheck}
                             />
                         </TableCell>
                         <TableCell align="center">
@@ -211,7 +317,7 @@ function TimeSheetHome(props) {
                                 checked={row.holiday}
                                 onChange={(e)=>handleHolidayChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
-                                disabled={row.vacation || row.floatingDay}
+                                disabled={true}
                             />
                         </TableCell>
                         <TableCell align="center">
@@ -219,7 +325,7 @@ function TimeSheetHome(props) {
                                 checked={row.vacation}
                                 onChange={(e)=>handleVacationChange(index, e)}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
-                                disabled={row.holiday || row.floatingDay}
+                                disabled={row.holiday || row.floatingDay || isApproved || !vacationCheck}
                             />
                         </TableCell>
                         </TableRow>
@@ -228,10 +334,40 @@ function TimeSheetHome(props) {
                 </Table>
             </TableContainer>
             </div>
+            <br></br>
             <div>
-                <Button variant="contained" color="primary" onClick={testChange} disabled={!isValid}>
-                    Save
-                </Button>
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    spacing={10}
+                >
+                <Grid item>
+                
+                    <TextField select variant="outlined" className={classes.formControlMed} placeholder="hello" 
+                        onChange={setDocumentType} label="Document Approval Status" InputLabelProps={{
+                            classes: {
+                                root: classes.label
+                            }
+                        }}
+                    >
+                        <MenuItem value="Approved Timesheet">Approved Timesheet</MenuItem>
+                        <MenuItem value="Unapproved Timesheet">Unapproved Timesheet</MenuItem>
+                    
+                    </TextField>
+                </Grid>
+                
+                <Grid item>
+                        <input type="file" onChange={handleFileInput} accept=".pdf, .doc, .docx, .jpeg, .xlsx, .jpg"/>
+                    
+                </Grid>
+                </Grid>
+                <Grid container direction="row" alignItems="center" justifyContent="flex-end">
+                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet, uploadDocument} disabled={!isValid}>
+                        Save
+                    </Button>
+                </Grid>
             </div>
         </div>
     )

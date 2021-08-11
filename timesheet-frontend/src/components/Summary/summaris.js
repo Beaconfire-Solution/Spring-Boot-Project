@@ -1,10 +1,11 @@
-import { React, Component, useState, useEffect} from 'react';
+import { React, Component} from 'react';
 import { connect } from 'react-redux';
 import { getTimesheetSummary } from '../../action/action'
 import { Link } from 'react-router-dom';
 import { FaInfoCircle } from 'react-icons/fa';
 import { convertISO_to_Date } from '../../services/dateConverter';
 import { Tooltip } from '@material-ui/core';
+
 
 
 class Summaries extends Component {
@@ -22,29 +23,29 @@ class Summaries extends Component {
 
     async componentDidMount() {
         await this.props.getTimesheetSummary()
-        const initialList = await this.props.timesheetSummaries
-        this.setState({ currentWeeklyTimesheets: initialList.slice(0, this.state.tableSize) });      
+        
+        this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries});      
     }
 
     changeToShowMoreOrLess = () => {
-        if (this.state.showAll == false) {
+        if (this.state.showAll === false) {
             this.setState({ showAll: true });
             this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries});
         }
-        if (this.state.showAll == true) {
+        if (this.state.showAll === true) {
             this.setState({ showAll: false });
             this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries.slice(0, this.state.tableSize) });
         }     
     };
 
     showMoreTag = () => {
-        if (this.state.showAll == true) return "Show Less"
+        if (this.state.showAll === true) return "Show Less"
         return "Show More"
     }
 
     optionTags = (week) => {
         let selectedWeek = convertISO_to_Date(week.weeklyTimesheets.weekEnding)
-        let option = week.weeklyTimesheets.approvedStatus == "Approved" ? "view" : "edit"
+        let option = week.weeklyTimesheets.approvedStatus === "Approved" ? "view" : "edit"
         let url = "timesheet?weekEnding="+ selectedWeek + '/' + option;
         return <Link to={ url}>{ option}</Link>
     }
@@ -53,7 +54,7 @@ class Summaries extends Component {
     tagTextSubmission = (week) => {
         const status = week.weeklyTimesheets.submissionStatus; 
         const fileType = week.weeklyTimesheets.document.type;
-        if (status != 'Not Started' && fileType != 'Approved') {
+        if (status !== 'Not Started' && fileType !== 'Approved') {
             return 'Items due: Proof of Approved TimeSheet'
         } 
         return 'Approval denied by Admin, please contact your HR manager'
@@ -64,10 +65,9 @@ class Summaries extends Component {
     }
 
 
-    render() {
-        
-        console.log("before render")
-        console.log(this.props)
+    render() {      
+        // console.log("before render")
+        // console.log(this.props)
         
         return (
             <div>
@@ -89,7 +89,7 @@ class Summaries extends Component {
                                 <td>{week.weeklyTimesheets.totalBillingHours}</td>
                                 <td>
                                     <span>{week.weeklyTimesheets.submissionStatus}</span> <span></span>
-                                    {week.weeklyTimesheets.submissionStatus == "Incomplete" &&
+                                    {week.weeklyTimesheets.submissionStatus === "Incomplete" &&
                                         <Tooltip title={this.tagTextSubmission(week)}>
                                             <span>
                                                 <FaInfoCircle />
@@ -109,7 +109,7 @@ class Summaries extends Component {
                     </tbody>
                 </table>
                 <div className="text-center">
-                    {this.state.currentWeeklyTimesheets.length!=0&&<button type="button" className="btn btn-light" onClick={() => this.changeToShowMoreOrLess()}>{this.showMoreTag()}</button>}
+                    {this.state.currentWeeklyTimesheets.length!==0&&<button type="button" className="btn btn-light" onClick={() => this.changeToShowMoreOrLess()}>{this.showMoreTag()}</button>}
                 </div>
                 
                 

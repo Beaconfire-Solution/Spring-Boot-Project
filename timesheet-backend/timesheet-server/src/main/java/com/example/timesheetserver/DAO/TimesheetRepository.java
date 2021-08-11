@@ -11,6 +11,7 @@ public interface TimesheetRepository extends MongoRepository<Timesheet, String> 
     List<Timesheet> findByProfile_Id(String id);
     List<Timesheet> findAll();
     Optional<Timesheet> findById(String id);
+    Timesheet findByProfile_IdAndWeeklyTimesheets_WeekEnding(String id, String weekEnding);
 
 
 

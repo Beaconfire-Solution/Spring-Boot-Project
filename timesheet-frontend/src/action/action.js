@@ -1,5 +1,6 @@
 import * as actionType from './actionTypes';
-import { fetchAllTimesheets } from '../services/ApiService'
+import { fetchAllTimesheets} from '../services/ApiService';
+
 
 export const getTimesheetSummary = () => (dispatch) => {
     return fetchAllTimesheets()

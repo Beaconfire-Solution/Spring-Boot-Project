@@ -5,7 +5,7 @@ import * as ApiService from '../services/ApiService';
 const initialState = {
     weeklyTimesheets: [],
     timesheetTemplate: [],
-
+    user_profile: {},
     curr_timeSheet: [],
     summaryTimesheets: []
 }
@@ -46,9 +46,6 @@ const postTemplate = (state) => {
 
 
 const getTimesheetSummary = (state, action) => {
-    console.log("action called")
-    console.log(state)
-    console.log(action)
     return {
         ...state,
         summaryTimesheets: action.payload
@@ -68,12 +65,8 @@ export default function appReducer(state = initialState, action) {
         case actionTypes.POST_TIMESHEET_TEMPLATE:
             return postTemplate(state);
         
-
         case actionTypes.GET_TIMESHEET_SUMMARY:
-            let newState =  getTimesheetSummary(state, action);
-            console.log("now new state is");
-            console.log(newState)
-            return newState
+            return getTimesheetSummary(state, action);
 
         case actionTypes.GET_WEEKLYTIMESHEETS:
             return setWeeklyTimesheet(state, action);
