@@ -2,12 +2,15 @@ package com.example.timesheetserver.Controller;
 
 import com.example.timesheetserver.DAO.TimesheetRepository;
 import com.example.timesheetserver.Domain.*;
+import com.example.timesheetserver.Service.AmazonClient;
 import com.example.timesheetserver.Service.ProfileService;
 import com.example.timesheetserver.Service.TimesheetService;
 import com.example.timesheetserver.Util.CurrentTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLOutput;
 import java.sql.Time;
@@ -24,6 +27,11 @@ public class TimesheetController {
 
     @Autowired
     ProfileService profileService;
+
+    private AmazonClient amazonClient;
+
+    @Autowired
+    public void setAmazonClient(AmazonClient amazonClient){this.amazonClient = amazonClient;}
 
 
     @CrossOrigin
@@ -52,6 +60,13 @@ public class TimesheetController {
     public ResponseEntity updateTemplate(@PathVariable String id, @RequestBody List<DailyTimesheet> template){
         profileService.updateTemplate(id, template);
         return ResponseEntity.ok("Update Succeed!");
+    }
+
+    @CrossOrigin
+    @PostMapping(path = "/fileUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadFile( MultipartFile file) {
+        System.out.println(file);
+        return this.amazonClient.uploadFile(file);
     }
 
     @CrossOrigin

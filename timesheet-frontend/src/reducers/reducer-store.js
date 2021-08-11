@@ -5,7 +5,7 @@ import * as ApiService from '../services/ApiService';
 const initialState = {
     weeklyTimesheets: [],
     timesheetTemplate: [],
-
+    user_profile: {},
     curr_timeSheet: [],
     summaryTimesheets: []
 }
