@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import InfoIcon from './infoIcon';
 import { FaInfoCircle } from 'react-icons/fa';
 import ReactTooltip from "react-tooltip";
-
+import { convertISO_to_Date } from '../../services/dateConverter';
 
 
 class Summaries extends Component {
@@ -47,7 +47,7 @@ class Summaries extends Component {
     optionTags = (args) => {
         console.log("week  " + args.week)
         let selectedWeek = args.week.weekEnding
-        let option = args.week.approvalStatus == "Approved" ? "view" : "edit"
+        let option = args.week.weeklyTimesheets.approvedStatus == "Approved" ? "view" : "edit"
         let url = "timesheet?weekEnding="+ selectedWeek + '/' + option;
         return <Link to={ url}>{ option}</Link>
     }
@@ -86,8 +86,9 @@ class Summaries extends Component {
                     <tbody>
                         {this.state.currentWeeklyTimesheets.map(week => (
                             <tr key={week.id}>
-                                <td>{week.weekEnding}</td>
-                                <td>{week.totalHours}</td>
+
+                                <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
+                                <td>{week.weeklyTimesheets.totalBillingHours}</td>
                                 <td>
                                     {week.submissionStatus}<span> </span>
                                     {this.showInfoIcon({ status: week.submissionStatus })}
@@ -98,7 +99,7 @@ class Summaries extends Component {
                                 <td>{week.approvalStatus}</td>
                                 <td>{this.optionTags({ week: week })}</td>
                                 <td>{week.comment}
-                                    {this.showInfoIcon({ status: week.submissionStatus })}
+                                    {this.showInfoIcon({ status: week.weeklyTimesheets.submissionStatus })}
                                     <ReactTooltip id="submissionTip" place="top" effect="solid">
                                         This is submission tip
                                     </ReactTooltip>
