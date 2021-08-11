@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import InfoIcon from './infoIcon';
 import { FaInfoCircle } from 'react-icons/fa';
 import ReactTooltip from "react-tooltip";
-
+import { convertISO_to_Date } from '../../services/dateConverter';
 
 
 class Summaries extends Component {
@@ -86,7 +86,7 @@ class Summaries extends Component {
                     <tbody>
                         {this.state.currentWeeklyTimesheets.map(week => (
                             <tr key={week.id}>
-                                <td>{week.weeklyTimesheets.weekEnding}</td>
+                                <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
                                 <td>{week.weeklyTimesheets.totalBillingHours}</td>
                                 <td>
                                     {week.weeklyTimesheets.submissionStatus}<span> </span>
