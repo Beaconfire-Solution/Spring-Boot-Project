@@ -17,6 +17,16 @@ export function postTemplate(template){
 
 }
 
+
+export function getProfile(){
+    return axios.get('http://localhost:11000/profile/61101603d0ca8600cd04d961')
+
+}
+
+export function postProfile(contact){
+    return axios.post('http://localhost:11000/profile/61101603d0ca8600cd04d961', contact)
+}
+
 //update the current weekly timesheet
 export function postWeeklyTimesheet(weeklyTimesheet){
     return axios.post('https://080dc608-fead-4169-9690-0bc109ef0a63.mock.pstmn.io', weeklyTimesheet)
@@ -27,7 +37,9 @@ export function postWeeklyTimesheet(weeklyTimesheet){
 // For Summary Section to get a list of WeeklyTimesheets summary
 export function fetchWeeklyTimesheets(){
     return axios.get('https://api.npoint.io/626ec669cd7ed6db4711')
+
 }
+
 
 // For uploading file
 export function uploadFile(file){
@@ -40,4 +52,5 @@ export function uploadFile(file){
         }
     })
 }
+
 

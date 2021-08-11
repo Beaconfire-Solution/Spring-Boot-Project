@@ -21,7 +21,7 @@ public class ProfileController {
     }
 
     @CrossOrigin
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity updateProfile(@PathVariable String id, @RequestBody Contact contact){
         profileService.updateContact(id, contact);
         return ResponseEntity.ok("Save Succeed!");

@@ -1,15 +1,101 @@
 package com.example.timesheetserver.Util;
 
+import com.example.timesheetserver.Domain.DailyTimesheet;
+import com.example.timesheetserver.Domain.Timesheet;
+import com.example.timesheetserver.Domain.Timesheets;
+import de.jollyday.Holiday;
+import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayManager;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public class CurrentTime {
 
     public static String getCurrentTime(){
         SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
-        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");// a为am/pm的标记
+        sdf.applyPattern("yyyy-MM-dd'T'HH:mm'Z'");// a为am/pm的标记
         Date date = new Date();// 获取当前时间
         return sdf.format(date);
 
+    }
+
+    public static boolean compareDay(String currentDay){
+        HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
+        Set<Holiday> holidays = m.getHolidays(2021, "ny");
+        for(Holiday h: holidays){
+            if(currentDay.equals(String.valueOf(h.getDate()))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<DailyTimesheet> setAllDateByWeekEnd(List<DailyTimesheet> template, String currentTime) throws ParseException {
+        for(DailyTimesheet dailyTimesheet: template){
+            if(dailyTimesheet.getDay().equals("Sunday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-6, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-6, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Monday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-5, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-5, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Tuesday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-4, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-4, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Wednesday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-3, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-3, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Thursday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-2, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-2, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Friday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-1, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(-1, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+            if(dailyTimesheet.getDay().equals("Saturday")){
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(0, currentTime));
+                if(compareDay(CurrentTime.generateDayByCurrent(0, currentTime))){
+                    dailyTimesheet.setHoliday(true);
+                }
+            }
+        }
+        return template;
+    }
+
+    public static String generateDayByCurrent(int move, String currentTime) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        String dateInString = currentTime;
+        Date date = formatter.parse(dateInString);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        calendar.add(Calendar.DATE, move);
+
+        date = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd");
+
+
+        return sdf.format(date);
     }
 }

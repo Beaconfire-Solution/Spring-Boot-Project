@@ -6,6 +6,9 @@ import com.example.timesheetserver.Service.AmazonClient;
 import com.example.timesheetserver.Service.ProfileService;
 import com.example.timesheetserver.Service.TimesheetService;
 import com.example.timesheetserver.Util.CurrentTime;
+import de.jollyday.Holiday;
+import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLOutput;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/timesheet")
@@ -45,6 +50,10 @@ public class TimesheetController {
     @GetMapping("/timesheets/{id}")
     public ResponseEntity getTimesheetsByProfileId(@PathVariable String id){
         //System.out.println(timesheetService.findByProfile_Id(id));
+        HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
+        Set<Holiday> holidays = m.getHolidays(2021, "ny");
+        for(Holiday h: holidays)
+            System.out.println(h.getDate());
         return ResponseEntity.ok(timesheetService.findByProfile_Id(id));
     }
 
@@ -63,19 +72,25 @@ public class TimesheetController {
     }
 
     @CrossOrigin
+    @GetMapping("/weeklytimesheet")
+    public ResponseEntity getWeeklyTimesheet(@RequestParam("id") String id, @RequestParam("weekEnding") String weekEnding){
+        return ResponseEntity.ok(timesheetService.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding));
+
     @PostMapping(path = "/fileUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadFile( MultipartFile file) {
         System.out.println(file);
         return this.amazonClient.uploadFile(file);
+
     }
 
     @CrossOrigin
     @GetMapping("/defaulttimesheets")
-    public ResponseEntity generateTimesheet(){
+    public ResponseEntity generateTimesheet() throws ParseException {
+        String weekEnding = CurrentTime.getCurrentTime();
         List<Profile> profileList = profileService.findAll();
         for(Profile p : profileList){
             Timesheets weeklyTimesheet = new Timesheets();
-            weeklyTimesheet.setWeekEnding(CurrentTime.getCurrentTime());
+            weeklyTimesheet.setWeekEnding("2021-04-10");
             weeklyTimesheet.setTotalCompensatedHours(0);
             weeklyTimesheet.setTotalBillingHours(0);
             weeklyTimesheet.setSubmissionStatus("Not Started");
@@ -83,7 +98,8 @@ public class TimesheetController {
             weeklyTimesheet.setFloatingDayUsed(0);
             weeklyTimesheet.setVacationDayUse(0);
             weeklyTimesheet.setHolidayUsed(0);
-            weeklyTimesheet.setDailyTimesheets(p.getTemplate());
+            List<DailyTimesheet> template = p.getTemplate();
+            weeklyTimesheet.setDailyTimesheets(CurrentTime.setAllDateByWeekEnd(template, "2021-04-10"));
             Document d = new Document();
             d.setTitle("");
             d.setType("");
@@ -97,6 +113,7 @@ public class TimesheetController {
         return ResponseEntity.ok("Generation succeed!");
 
     }
+
 
 
 
