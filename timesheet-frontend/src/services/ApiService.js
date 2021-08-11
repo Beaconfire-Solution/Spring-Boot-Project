@@ -19,7 +19,10 @@ export function postTemplate(template){
 export function getProfile(){
     return axios.get('http://localhost:11000/profile/61101603d0ca8600cd04d961')
 
+}
 
+export function postProfile(contact){
+    return axios.post('http://localhost:11000/profile/61101603d0ca8600cd04d961', contact)
 }
 
 

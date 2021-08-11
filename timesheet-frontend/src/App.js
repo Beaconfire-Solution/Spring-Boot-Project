@@ -20,6 +20,7 @@ class App extends Component {
           <Switch>
             <Route path="/summary" component={Summaries} />
             <Route path="/timesheet" component={TimeSheetHome} />
+            <Route path="/profile" component={Profile} />
             <Route path="/not-found" component={NotFound} />
             <Redirect from="/" exact to="/summary" />
             <Redirect to="/not-found"/>

@@ -36,6 +36,10 @@ public class TimesheetService {
             timesheetRepository.save(ts);
         });
     }
+
+    public Timesheet findByProfile_IdAndWeeklyTimesheets_WeekEnding(String id, String weekEnding){
+        return timesheetRepository.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
+    }
     public void save(Timesheet timesheet){
         timesheetRepository.save(timesheet);
     }
