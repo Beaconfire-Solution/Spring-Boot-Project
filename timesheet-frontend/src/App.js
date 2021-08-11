@@ -1,14 +1,34 @@
+import React, { Component } from "react";
 import './App.css';
 import TimeSheetHome from './components/TimeSheetHome/TimeSheetHome';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Routes, Route } from 'react-router';
 
-function App() {
-  return (
-    <Routes>
-      <Route path='/timesheet/edit' element={<TimeSheetHome/>}></Route>
-    </Routes>
-  );
+import 'bootstrap/dist/css/bootstrap.css';
+import { Route, Redirect, Switch } from "react-router-dom";
+import NavBar from './components/navbar/navbar';
+import Summaries from "./components/Summary/summaris";
+import NotFound from "./components/Summary/notFound";
+
+
+class App extends Component {
+  render() {
+    return (
+      <React.Fragment>
+        <NavBar />
+        <main className="container">
+          <Switch>
+            <Route path="/summary" component={Summaries} />
+            <Route path="/timesheet" component={TimeSheetHome} />
+            <Route path="/not-found" component={NotFound} />
+            <Redirect from="/" exact to="/summary" />
+            <Redirect to="/not-found"/>
+          </Switch>
+        </main>
+      </React.Fragment>
+    );
+  }
+
 }
 
 export default App;
+
