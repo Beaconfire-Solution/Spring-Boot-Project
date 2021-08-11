@@ -6,7 +6,7 @@ const initialState = {
     weeklyTimesheets: [],
     timesheetTemplate: [],
     curr_timeSheet: [],
-    summaryTimesheets : []
+    summaryTimesheets: []
 }
 
 // const setWeeklyTimesheet = (state) => {
@@ -36,6 +36,9 @@ const postTemplate = (state) => {
 }
 
 const getTimesheetSummary = (state, action) => {
+    console.log("action called")
+    console.log(state)
+    console.log(action)
     return {
         ...state,
         summaryTimesheets: action.payload
@@ -55,7 +58,10 @@ export default function appReducer(state = initialState, action) {
             return postTemplate(state);
         
         case actionTypes.GET_TIMESHEET_SUMMARY:
-            return getTimesheetSummary(state, action);
+            let newState =  getTimesheetSummary(state, action);
+            console.log("now new state is");
+            console.log(newState)
+            return newState
         default:
             return state;
 

@@ -12,6 +12,6 @@ export function postTemplate(template){
 
 // For Summary Section to get a list of WeeklyTimesheets summary
 export function fetchWeeklyTimesheets(){
-    return axios.get('https://api.npoint.io/3a7560ddcaa149d9173b')
+    return axios.get('https://api.npoint.io/626ec669cd7ed6db4711')
 }
 

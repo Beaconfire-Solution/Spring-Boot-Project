@@ -5,8 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Redirect, Switch } from "react-router-dom";
 import NavBar from './components/navbar/navbar';
-import Summary from './components/summary/summary';
-import NotFound from "./components/summary/notFound";
+import Summaries from "./components/Summary/summaris";
+import NotFound from "./components/Summary/notFound";
 
 
 class App extends Component {
@@ -16,7 +16,7 @@ class App extends Component {
         <NavBar />
         <main className="container">
           <Switch>
-            <Route path="/summary" component={Summary} />
+            <Route path="/summary" component={Summaries} />
             <Route path="/timesheet" component={TimeSheetHome} />
             <Route path="/not-found" component={NotFound} />
             <Redirect from="/" exact to="/summary" />
