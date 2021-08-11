@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import './App.css';
 import TimeSheetHome from './components/TimeSheetHome/TimeSheetHome';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Redirect, Switch } from "react-router-dom";
 import NavBar from './components/navbar/navbar';
@@ -26,6 +27,7 @@ class App extends Component {
       </React.Fragment>
     );
   }
+
 }
 
 export default App;

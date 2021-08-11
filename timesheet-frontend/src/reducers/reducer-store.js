@@ -5,6 +5,7 @@ import * as ApiService from '../services/ApiService';
 const initialState = {
     weeklyTimesheets: [],
     timesheetTemplate: [],
+
     curr_timeSheet: [],
     summaryTimesheets: []
 }
@@ -12,6 +13,14 @@ const initialState = {
 // const setWeeklyTimesheet = (state) => {
     
 // }
+
+const setWeeklyTimesheet = (state, action) => {
+    return {
+        ...state,
+        weeklyTimesheets: action.payload
+    }
+}
+
 
 const setTimesheetTemplate = (state, action) =>{
     return {
@@ -35,6 +44,7 @@ const postTemplate = (state) => {
     }
 }
 
+
 const getTimesheetSummary = (state, action) => {
     console.log("action called")
     console.log(state)
@@ -44,6 +54,7 @@ const getTimesheetSummary = (state, action) => {
         summaryTimesheets: action.payload
     };
 }
+
 
 export default function appReducer(state = initialState, action) {
     switch (action.type){
@@ -57,11 +68,17 @@ export default function appReducer(state = initialState, action) {
         case actionTypes.POST_TIMESHEET_TEMPLATE:
             return postTemplate(state);
         
+
         case actionTypes.GET_TIMESHEET_SUMMARY:
             let newState =  getTimesheetSummary(state, action);
             console.log("now new state is");
             console.log(newState)
             return newState
+
+        case actionTypes.GET_WEEKLYTIMESHEETS:
+            return setWeeklyTimesheet(state, action);
+
+
         default:
             return state;
 
