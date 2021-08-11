@@ -73,8 +73,9 @@ public class TimesheetController {
 
     @CrossOrigin
     @GetMapping("/weeklytimesheet")
-    public ResponseEntity getWeeklyTimesheet(@RequestParam("id") String id, @RequestParam("weekEnding") String weekEnding){
+    public ResponseEntity getWeeklyTimesheet(@RequestParam("id") String id, @RequestParam("weekEnding") String weekEnding) {
         return ResponseEntity.ok(timesheetService.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding));
+    }
 
     @PostMapping(path = "/fileUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadFile( MultipartFile file) {
