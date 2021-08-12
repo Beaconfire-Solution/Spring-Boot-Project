@@ -15,7 +15,7 @@ class Summaries extends Component {
         super(props);
         this.props.getTimesheetSummary();
         this.state = {
-            userID : "61101603d0ca8600cd04d961",
+            userID : window.sessionStorage.getItem("userID"),
             currentWeeklyTimesheets: [],
             tableSize: 3,
             showAll: false,
