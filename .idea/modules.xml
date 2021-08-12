@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Auth-server/Auth-Server.iml" filepath="$PROJECT_DIR$/Auth-server/Auth-Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MyLocal.iml" filepath="$PROJECT_DIR$/.idea/MyLocal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timesheet-backend/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/timesheet-backend/eureka-server/eureka-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timesheet-backend/gate-way/gate-way.iml" filepath="$PROJECT_DIR$/timesheet-backend/gate-way/gate-way.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timesheet-backend/profile-server/profile-server.iml" filepath="$PROJECT_DIR$/timesheet-backend/profile-server/profile-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timesheet-backend/timesheet.iml" filepath="$PROJECT_DIR$/timesheet-backend/timesheet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timesheet-backend/timesheet-server/timesheet-server.iml" filepath="$PROJECT_DIR$/timesheet-backend/timesheet-server/timesheet-server.iml" />
+    </modules>
+  </component>
+</project>
