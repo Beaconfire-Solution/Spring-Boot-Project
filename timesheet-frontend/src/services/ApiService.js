@@ -42,11 +42,25 @@ export function fetchWeeklyTimesheets(){
 
 
 // For uploading file
-export function uploadFile(file){
+export function uploadFile(file, weekEnding){
     let formData = new FormData();
     formData.append("file", file);
+    formData.append("userId", window.sessionStorage.getItem("userID"));
+    formData.append("weekEnding", weekEnding);
     console.log(formData);
     return axios.post('http://localhost:9000/timesheet/fileUpload', formData, {
+        headers:{
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
+export function uploadAvatar(file){
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", window.sessionStorage.getItem("userID"));
+    console.log(formData);
+    return axios.post('http://localhost:9000/profile/fileUpload', formData, {
         headers:{
             'Content-Type': 'multipart/form-data'
         }

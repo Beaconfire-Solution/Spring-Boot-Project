@@ -17,18 +17,22 @@ function TimeSheetHome(props) {
     const [floatingDayCheck, setFloatingDayCheck] = useState(true);
     const [vacationCheck, setVacationCheck] = useState(true);
     const [selectedDocument, setDocument] = useState(null);
+    const [userId, setUserId] = useState('61101603d0ca8600cd04d961');
 
     useEffect(() => {
+        
         const getWeeklyTimesheets = () => {
-            ApiService.fetchAllTimesheets()
+            setUserId(window.sessionStorage.getItem("userID"));
+            ApiService.fetchAllTimesheets(userId)
             .then((response)=>{
-                props.getWeeklyTimesheets(response.data[0].weeklyTimesheets);
+                //console.log(response);
+                props.getWeeklyTimesheets(response.data[6].weeklyTimesheets);
                 setNewTimesheet(props.weeklyTimesheets);
-                console.log(newTimesheet);
+                //console.log(newTimesheet);
             })
         }
         getWeeklyTimesheets();
-        console.log(newTimesheet.approvedStatus);
+        //console.log(newTimesheet.approvedStatus);
         if (newTimesheet.approvedStatus === "N/A"){
             setApproved(true);
         }
@@ -45,7 +49,7 @@ function TimeSheetHome(props) {
     }
 
     const uploadDocument = () => {
-        ApiService.uploadFile(selectedDocument);
+        ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
     }
 
     const handleFileInput = (e) => {

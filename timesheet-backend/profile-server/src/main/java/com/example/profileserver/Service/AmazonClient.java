@@ -1,16 +1,13 @@
-package com.example.timesheetserver.Service;
+package com.example.profileserver.Service;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.timesheetserver.Domain.Document;
-import com.example.timesheetserver.Domain.Timesheet;
-import com.example.timesheetserver.Util.CurrentTime;
+import com.example.profileserver.Domain.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AmazonClient {
@@ -37,7 +35,7 @@ public class AmazonClient {
     private String secretKey;
 
     @Autowired
-    TimesheetService timesheetService;
+    ProfileService profileService;
 
     @PostConstruct
     private void initializeAmazon() {
@@ -63,18 +61,18 @@ public class AmazonClient {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public String uploadFile(MultipartFile multipartFile, String id, String weekEnding) {
+    public String uploadFile(MultipartFile multipartFile, String id) {
         String fileUrl = "";
         try {
             File file = convertMultiPartToFile(multipartFile);
             String fileName = generateFileName(multipartFile);
             fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-            Timesheet t = timesheetService.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
-            Document document = t.getWeeklyTimesheets().getDocument();
-            document.setUrl(fileUrl);
-            document.setUploadedTime(CurrentTime.getCurrentTime());
-            document.setTitle(fileName);
-            timesheetService.save(t);
+            Optional<Profile> profile = profileService.findById(id);
+            String finalFileUrl = fileUrl;
+            profile.ifPresent(profile1 ->{
+                profile1.setProfilePicture(finalFileUrl);
+                profileService.save(profile1);
+            });
             uploadFileTos3bucket(fileName, file);
             file.delete();
         } catch (Exception e) {

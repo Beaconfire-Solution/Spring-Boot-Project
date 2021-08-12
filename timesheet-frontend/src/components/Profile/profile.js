@@ -15,16 +15,20 @@ function Profile(props) {
     })
 
     const [name, setName] = useState('Zack');
-
     const [emc, setEmc] = useState([])
+    const [selectedDocument, setDocument] = useState(null);
+    const [userId, setUserId] = useState('61101603d0ca8600cd04d961');
+    const [imageurl, setImageurl] = useState('http://www.gravatar.com/avatar/?d=mp')
 
     useEffect(() => {
         // Update the document title using the browser API
-        ApiService.getProfile()
+        setUserId(window.sessionStorage.getItem("userID"));
+        ApiService.getProfile(userId)
         .then((response)=>{
             setContact(response.data.contact);
             setName(response.data.name);
             setEmc(response.data.emergencyContacts);
+            setImageurl(response.data.profilePicture);
         
         })
       }, []);
@@ -37,6 +41,15 @@ function Profile(props) {
         ApiService.postProfile(contact);
     }
 
+    const uploadDocument = () => {
+        ApiService.uploadAvatar(selectedDocument).then((response)=>{
+            window.location.reload();
+        });
+    }
+
+    const handleFileInput = (e) => {
+        setDocument(e.target.files[0]);
+    }
 
     return(
         <Grid container spacing={2}>
@@ -55,9 +68,15 @@ function Profile(props) {
                                 </FormControl>
                                 </div>
                                 <div className={ProfileCSS.row}>
+                                <img src={imageurl} alt="Avatar" className={ProfileCSS.avatar}></img>
+                                </div>
+                                <div className={ProfileCSS.row}>
                                 <label for="img">Select image:</label>
-                                <input type="file" id="img" name="img" accept="image/*"></input>
-                                <input type="submit"></input>
+                                <input type="file" onChange={handleFileInput} id="img" name="img" accept=".pdf, .doc, .docx, .jpeg, .xlsx, .jpg"></input>
+                                <br></br>
+                                <Button variant="contained" color="primary" onClick={uploadDocument}>
+                                    Save
+                                </Button>
                                 </div>
                             
             <div className={ProfileCSS.row}>
