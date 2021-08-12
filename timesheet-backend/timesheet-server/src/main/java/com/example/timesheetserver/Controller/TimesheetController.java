@@ -50,10 +50,10 @@ public class TimesheetController {
     @GetMapping("/timesheets/{id}")
     public ResponseEntity getTimesheetsByProfileId(@PathVariable String id){
         //System.out.println(timesheetService.findByProfile_Id(id));
-        HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
-        Set<Holiday> holidays = m.getHolidays(2021, "ny");
-        for(Holiday h: holidays)
-            System.out.println(h.getDate());
+//        HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
+//        Set<Holiday> holidays = m.getHolidays(2021, "ny");
+//        for(Holiday h: holidays)
+//            System.out.println(h.getDate());
         return ResponseEntity.ok(timesheetService.findByProfile_Id(id));
     }
 
