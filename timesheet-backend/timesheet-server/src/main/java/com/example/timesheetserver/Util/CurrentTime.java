@@ -14,9 +14,9 @@ import java.util.*;
 public class CurrentTime {
 
     public static String getCurrentTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
-        sdf.applyPattern("yyyy-MM-dd'T'HH:mm'Z'");// a为am/pm的标记
-        Date date = new Date();// 获取当前时间
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd'T'HH:mm'Z'");
+        Date date = new Date();
         return sdf.format(date);
 
     }

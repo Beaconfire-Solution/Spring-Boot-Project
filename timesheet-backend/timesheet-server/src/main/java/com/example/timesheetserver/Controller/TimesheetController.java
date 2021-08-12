@@ -6,9 +6,7 @@ import com.example.timesheetserver.Service.AmazonClient;
 import com.example.timesheetserver.Service.ProfileService;
 import com.example.timesheetserver.Service.TimesheetService;
 import com.example.timesheetserver.Util.CurrentTime;
-import de.jollyday.Holiday;
-import de.jollyday.HolidayCalendar;
-import de.jollyday.HolidayManager;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,22 +36,35 @@ public class TimesheetController {
     @Autowired
     public void setAmazonClient(AmazonClient amazonClient){this.amazonClient = amazonClient;}
 
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/approveStatus")
+    public ResponseEntity approveStatus(@RequestParam("id") String id, @RequestParam("weekEnding") String weekEnding, @RequestParam("approving") String approving){
+        Timesheet t = timesheetService.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
+        t.getWeeklyTimesheets().setApprovedStatus(approving);
+        if(approving.equals("Approved")){
+            rabbitTemplate.convertAndSend("timesheet", "timesheet.approve", t.toString());
+        }
+        return ResponseEntity.ok("Timesheet Approved!");
+    }
+
 
     @CrossOrigin
     @GetMapping("/timesheets")
     public ResponseEntity getAllTimesheets(){
-        System.out.println(timesheetService.findAll());
         return ResponseEntity.ok(timesheetService.findAll());
     }
 
     @CrossOrigin
     @GetMapping("/timesheets/{id}")
     public ResponseEntity getTimesheetsByProfileId(@PathVariable String id){
-        //System.out.println(timesheetService.findByProfile_Id(id));
-//        HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
-//        Set<Holiday> holidays = m.getHolidays(2021, "ny");
-//        for(Holiday h: holidays)
-//            System.out.println(h.getDate());
         return ResponseEntity.ok(timesheetService.findByProfile_Id(id));
     }
 
@@ -77,10 +88,11 @@ public class TimesheetController {
         return ResponseEntity.ok(timesheetService.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding));
     }
 
+    @CrossOrigin
     @PostMapping(path = "/fileUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadFile( MultipartFile file) {
+    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") String id, @RequestParam("weekEnding") String weekEnding) {
         System.out.println(file);
-        return this.amazonClient.uploadFile(file);
+        return this.amazonClient.uploadFile(file, id, weekEnding);
 
     }
 
