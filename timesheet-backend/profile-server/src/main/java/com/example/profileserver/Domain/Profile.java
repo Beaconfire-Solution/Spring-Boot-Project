@@ -29,4 +29,7 @@ public class Profile {
 
     private List<DailyTimesheet> template;
 
+    private Integer remainingFloatingDay;
+    private Integer remainingVacationDay;
+
 }
