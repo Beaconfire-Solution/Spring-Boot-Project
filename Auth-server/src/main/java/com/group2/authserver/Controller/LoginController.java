@@ -50,9 +50,10 @@ public class LoginController {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             List<String> roles = ((User)userService.loadUserByUsername(username)).getRoles();
+            String profile_id = ((User) userService.loadUserByUsername(username)).getProfile_id();
             String token = jwtTokenProvider.createToken(username, roles);
             Map<Object, Object> model = new HashMap<>();
-            model.put("username", username);
+            model.put("profile_id", profile_id);
             model.put("token", token);
             return ResponseEntity.ok(model);
         }

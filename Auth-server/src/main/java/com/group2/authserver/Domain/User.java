@@ -33,6 +33,9 @@ public class User implements Serializable, UserDetails {
     @Column(name = "id")
     private int id;
 
+    @Column(name = "profile_id")
+    private String profile_id;
+
     @Column(name = "username")
     private String username;
 
