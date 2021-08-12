@@ -98,12 +98,12 @@ public class TimesheetController {
 
     @CrossOrigin
     @GetMapping("/defaulttimesheets")
-    public ResponseEntity generateTimesheet() throws ParseException {
-        String weekEnding = CurrentTime.getCurrentTime();
+    public ResponseEntity generateTimesheet(@RequestParam("weekEnding") String weekEnding1) throws ParseException {
+        String weekEnding = weekEnding1;
         List<Profile> profileList = profileService.findAll();
         for(Profile p : profileList){
             Timesheets weeklyTimesheet = new Timesheets();
-            weeklyTimesheet.setWeekEnding("2021-04-10");
+            weeklyTimesheet.setWeekEnding(weekEnding);
             weeklyTimesheet.setTotalCompensatedHours(0);
             weeklyTimesheet.setTotalBillingHours(0);
             weeklyTimesheet.setSubmissionStatus("Not Started");
@@ -112,7 +112,7 @@ public class TimesheetController {
             weeklyTimesheet.setVacationDayUse(0);
             weeklyTimesheet.setHolidayUsed(0);
             List<DailyTimesheet> template = p.getTemplate();
-            weeklyTimesheet.setDailyTimesheets(CurrentTime.setAllDateByWeekEnd(template, "2021-04-10"));
+            weeklyTimesheet.setDailyTimesheets(CurrentTime.setAllDateByWeekEnd(template, weekEnding));
             Document d = new Document();
             d.setTitle("");
             d.setType("");

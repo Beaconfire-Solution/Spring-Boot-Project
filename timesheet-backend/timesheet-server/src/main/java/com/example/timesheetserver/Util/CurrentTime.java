@@ -35,43 +35,43 @@ public class CurrentTime {
     public static List<DailyTimesheet> setAllDateByWeekEnd(List<DailyTimesheet> template, String currentTime) throws ParseException {
         for(DailyTimesheet dailyTimesheet: template){
             if(dailyTimesheet.getDay().equals("Sunday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-6, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-6, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-6, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Monday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-5, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-5, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-5, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Tuesday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-4, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-4, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-4, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Wednesday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-3, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-3, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-3, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Thursday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-2, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-2, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-2, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Friday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(-1, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-1, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(-1, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Saturday")){
-                dailyTimesheet.setDate(CurrentTime.generateDayByCurrent(0, currentTime));
+                dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(0, currentTime));
                 if(compareDay(CurrentTime.generateDayByCurrent(0, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
@@ -94,6 +94,25 @@ public class CurrentTime {
         date = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd");
+
+
+        return sdf.format(date);
+    }
+
+    public static String generateDayByCurrentIso(int move, String currentTime) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        String dateInString = currentTime;
+        Date date = formatter.parse(dateInString);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        calendar.add(Calendar.DATE, move);
+
+        date = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd'T'HH:mm:sss'Z'");
 
 
         return sdf.format(date);

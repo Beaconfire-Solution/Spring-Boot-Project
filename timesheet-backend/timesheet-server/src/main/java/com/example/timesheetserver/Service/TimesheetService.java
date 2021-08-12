@@ -27,8 +27,15 @@ public class TimesheetService {
         Optional<Timesheet> opt = timesheetRepository.findById(id);
         opt.ifPresent(ts -> {
             Timesheets weeklyTimesheets1 = ts.getWeeklyTimesheets();
-            if(weeklyTimesheets.getDocument().getUrl() != null)
-                weeklyTimesheets1.setSubmissionStatus("complete");
+            if(weeklyTimesheets.getDocument().getUrl() != null){
+                if(weeklyTimesheets.getDocument().getType().equals("Approved")){
+                    weeklyTimesheets1.setSubmissionStatus("complete");
+                }
+                weeklyTimesheets1.setSubmissionStatus("Incomplete");
+            }
+            else{
+                weeklyTimesheets1.setSubmissionStatus("Incomplete");
+            }
 
             weeklyTimesheets1.setDailyTimesheets(weeklyTimesheets.getDailyTimesheets());
 
