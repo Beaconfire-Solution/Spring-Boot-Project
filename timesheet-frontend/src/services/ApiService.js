@@ -55,6 +55,16 @@ export function uploadFile(file, weekEnding){
     })
 }
 
+
+export function login(loginInfo) {
+    return axios.post('http://localhost:10203/auth/login', loginInfo, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "X-Requested-With"
+        }
+    })
+}
+
 export function uploadAvatar(file){
     let formData = new FormData();
     formData.append("file", file);
@@ -66,4 +76,5 @@ export function uploadAvatar(file){
         }
     })
 }
+
 
