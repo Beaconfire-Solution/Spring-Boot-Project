@@ -29,8 +29,8 @@ class Summaries extends Component {
 
     async componentDidMount() {
         await this.props.getTimesheetSummary(this.state.userID)
-        this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries.slice(0, this.state.tableSize) });
-    }
+        // this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries.slice(0, this.state.tableSize) });
+    } 
 
     changeToShowMoreOrLess = () => {
         if (this.state.showAll === false) {
@@ -121,7 +121,7 @@ class Summaries extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.currentWeeklyTimesheets.map(week => (
+                        {this.props.currentWeeklyTimesheets.map(week => (
                             <tr key={week.id}>
                                 <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
                                 <td>{week.weeklyTimesheets.totalBillingHours}</td>
@@ -170,6 +170,7 @@ class Summaries extends Component {
 const mapStateToProps = (state) => {
     return {
         timesheetSummaries: state.summaryTimesheets,
+        currentWeeklyTimesheets :state.currentWeeklyTimesheets,
         profile : state.profile
     }
 }

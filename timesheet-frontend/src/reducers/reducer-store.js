@@ -10,7 +10,9 @@ const initialState = {
     user_profile: {},
     curr_timeSheet: [],
     summaryTimesheets: [],
-    profile:Object
+    profile: Object,
+    currentWeeklyTimesheets: [],
+    tableSize: 3,
 }
 
 // const setWeeklyTimesheet = (state) => {
@@ -51,7 +53,8 @@ const postTemplate = (state) => {
 const getTimesheetSummary = (state, action) => {
     return {
         ...state,
-        summaryTimesheets: action.payload
+        summaryTimesheets: action.payload, 
+        currentWeeklyTimesheets : action.payload.slice(0, state.tableSize)
     };
 }
 
