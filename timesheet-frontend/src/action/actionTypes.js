@@ -6,3 +6,8 @@ export const GET_TIMESHEET_SUMMARY = 'timesheet/summary';
 
 export const GET_WEEKLYTIMESHEETS = 'weeklyTimesheets/get';
 
+export const GET_USER_ID = 'userID/get';
+export const SET_USER_ID = 'userID/set';
+
+
+export const GET_PROFILE = 'profile/get';

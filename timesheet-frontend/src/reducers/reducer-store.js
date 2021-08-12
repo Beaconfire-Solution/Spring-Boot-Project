@@ -1,3 +1,5 @@
+import { getDisplayDate } from '@material-ui/pickers/_helpers/text-field-helper';
+import { setISODay } from 'date-fns';
 import * as actionTypes from '../action/actionTypes';
 import * as ApiService from '../services/ApiService';
 
@@ -7,7 +9,8 @@ const initialState = {
     timesheetTemplate: [],
     user_profile: {},
     curr_timeSheet: [],
-    summaryTimesheets: []
+    summaryTimesheets: [],
+    profile:Object
 }
 
 // const setWeeklyTimesheet = (state) => {
@@ -53,6 +56,14 @@ const getTimesheetSummary = (state, action) => {
 }
 
 
+
+const getProfile = (state, action) => {
+    return {
+        ...state,
+        profile: action.payload
+    }
+}
+
 export default function appReducer(state = initialState, action) {
     switch (action.type){
 
@@ -70,7 +81,12 @@ export default function appReducer(state = initialState, action) {
 
         case actionTypes.GET_WEEKLYTIMESHEETS:
             return setWeeklyTimesheet(state, action);
-
+        case actionTypes.GET_PROFILE:
+            return getProfile(state, action)
+        // case actionTypes.SET_USER_ID:
+        //     return setId(state, action)
+        // case actionTypes.GET_USER_ID:
+        //     return 
 
         default:
             return state;

@@ -1,10 +1,11 @@
 import { React, Component} from 'react';
 import { connect } from 'react-redux';
-import { getTimesheetSummary } from '../../action/action'
+import { getTimesheetSummary, getUserProfile } from '../../action/action'
 import { Link } from 'react-router-dom';
 import { FaInfoCircle } from 'react-icons/fa';
 import { convertISO_to_Date } from '../../services/dateConverter';
 import { Tooltip } from '@material-ui/core';
+
 
 
 
@@ -14,17 +15,21 @@ class Summaries extends Component {
         super(props);
         this.props.getTimesheetSummary();
         this.state = {
+            userID : "61101603d0ca8600cd04d961",
             currentWeeklyTimesheets: [],
             tableSize: 3,
             showAll: false,
             showSubmissionTag: false,
+            floatingDayUsed: 0,
+            vacationDayUsed: 0,
+            remainingFloatingDay: 0,
+            remainingVacationDay: 0
         }
     }
 
     async componentDidMount() {
-        await this.props.getTimesheetSummary()
-        
-        this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries});      
+        await this.props.getTimesheetSummary(this.state.userID)
+        this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries.slice(0, this.state.tableSize) });
     }
 
     changeToShowMoreOrLess = () => {
@@ -61,7 +66,40 @@ class Summaries extends Component {
     }
 
     showComment = (week) => {
-        
+        let floatingDayUsed = week.weeklyTimesheets.floatingDayUsed;
+        // let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; // need to be changed!!
+        let vacationDayUsed = 2;
+        return <td>
+            <tr>
+                {floatingDayUsed != 0 && floatingDayUsed + " Floating Day Required"}
+            </tr>
+            <tr>
+                {vacationDayUsed != 0 && vacationDayUsed + " Vacation Day Required"}
+            </tr>
+        </td>
+    } 
+
+    tagTextComment = (week) => {
+        this.props.getUserProfile(this.state.userID)
+        const remainingFloatingDay = this.props.profile.remainingFloatingDay;
+        const remainingVacationDay = this.props.profile.remainingVacationDay;
+        return <td>
+            {remainingFloatingDay != 0 && "Total floating days left in 2021 : " + remainingFloatingDay + " days\n"} <div></div>
+            {remainingVacationDay != 0 && "Total vacation days left in 2021 : " + remainingVacationDay + " days"}
+        </td>
+    }
+
+    showCommentFloatingDay = (week) => {
+        return <div>
+            {this.showComment(week)}
+            {this.showComment(week) !== '' &&
+                <Tooltip title={this.tagTextComment(week)}>
+                    <span>
+                        <FaInfoCircle />
+                    </span> 
+                </Tooltip>
+            }
+        </div>    
     }
 
 
@@ -100,8 +138,19 @@ class Summaries extends Component {
                                 </td>
                                 <td>{week.weeklyTimesheets.approvedStatus}</td>
                                 <td>{this.optionTags(week)}</td>
-                                <td>{this.showComment(week)}
-
+                                <td>
+                                    <td>{this.showComment(week)}</td>
+                                    <td>
+                                        {this.showComment(week) !== '' &&
+                                        <Tooltip title={this.tagTextComment(week)}>
+                                            <span>
+                                                <FaInfoCircle />
+                                            </span> 
+                                        </Tooltip>
+                                        }
+                                    </td>
+                                    
+                                    
                                 </td>
                             </tr>
                         
@@ -120,13 +169,15 @@ class Summaries extends Component {
 }
 const mapStateToProps = (state) => {
     return {
-        timesheetSummaries: state.summaryTimesheets
+        timesheetSummaries: state.summaryTimesheets,
+        profile : state.profile
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getTimesheetSummary: () => dispatch(getTimesheetSummary())
+        getTimesheetSummary: (userID) => dispatch(getTimesheetSummary(userID)),
+        getUserProfile : (userID) => dispatch(getUserProfile(userID))
     }
 }
 

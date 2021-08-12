@@ -1,39 +1,70 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
 
-const NavBar = () => {
-  return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+import React, { Component } from "react";
+import { Nav, Navbar } from "react-bootstrap";
+import { Link, NavLink, Redirect } from "react-router-dom";
+
+
+
+class NavBar extends Component  {
+
+  logout = () => {
+    console.log("remove")
+    window.sessionStorage.removeItem("user");
+    window.sessionStorage.removeItem("userID");
+
+  }
+
+  render() {
+    return (
+      <Navbar>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light container-fluid">
+          <Nav.Item>
+            <Link className="navbar-brand m-0" to="/summary">
+              <img src='https://www.linkpicture.com/q/Logo_BeaconFire.png' type="image" padding='10px' />
+            </Link>
+          </Nav.Item>
           
-      <Link className="navbar-brand m-3" to="/">
-        BeaconFire
-      </Link>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon" />
-      </button>
-      <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div className="navbar-nav">
-          <NavLink className="nav-item nav-link" to="/summary">
-            Summary
-          </NavLink>
-          <NavLink className="nav-item nav-link" to="/timesheet">
-            Timesheet
-          </NavLink>
-          <NavLink className="nav-item nav-link" to="/profile">
-            Profile
-          </NavLink>
-        </div>
-      </div>
-    </nav>
-  );
-};
+
+          <Nav.Item>
+            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+              <div className="navbar-nav">
+                <NavLink className="nav-item nav-link" to="/summary">
+                  Summary
+                </NavLink>
+                <NavLink className="nav-item nav-link" to="/timesheet">
+                  Timesheet
+                </NavLink>
+                <NavLink className="nav-item nav-link" to="/profile">
+                  Profile
+                </NavLink>
+              </div>
+            </div>
+            
+          </Nav.Item>
+
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+          <Nav.Item></Nav.Item>
+
+          
+          <Nav.Item>
+            <button href = "/login" className="btn btn-outline-secondary" onClick={ this.logout}> 
+              <Link to="/login" style={{ textDecoration: 'none', color : '#807c7c'}}>LOG OUT</Link>
+            </button>
+          </Nav.Item>
+          
+          
+          <Nav.Item></Nav.Item>
+        </nav>
+      </Navbar>
+      
+    )
+  }
+}
+  
 
 export default NavBar;

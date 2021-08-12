@@ -6,8 +6,8 @@ export function fetchTimesheetTemplate(){
     return axios.get('https://api.npoint.io/3875a568da79eafd2aa0')
 }
 
-export function fetchAllTimesheets(){
-    return axios.get('http://localhost:9000/timesheet/timesheets/61101603d0ca8600cd04d961')
+export function fetchAllTimesheets(userID){
+    return axios.get('http://localhost:9000/timesheet/timesheets/' + userID)
 
 }
 
@@ -18,8 +18,8 @@ export function postTemplate(template){
 }
 
 
-export function getProfile(){
-    return axios.get('http://localhost:11000/profile/61101603d0ca8600cd04d961')
+export function getProfile(userID) {
+    return axios.get('http://localhost:11000/profile/' + userID)
 
 }
 
@@ -52,5 +52,4 @@ export function uploadFile(file){
         }
     })
 }
-
 

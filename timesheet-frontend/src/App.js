@@ -5,28 +5,44 @@ import Profile from './components/Profile/profile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import { Route, Redirect, Switch } from "react-router-dom";
+import { Route, Redirect, Switch} from "react-router-dom";
 import NavBar from './components/navbar/navbar';
 import Summaries from "./components/Summary/summaris";
 import NotFound from "./components/Summary/notFound";
+import LogIn from "./components/Login/login";
 
 
 class App extends Component {
+  state = {
+    user : window.sessionStorage.getItem("user")
+  }
+
   render() {
     return (
-      <React.Fragment>
-        <NavBar />
-        <main className="container">
+      <div>
+        <div>
           <Switch>
-            <Route path="/summary" component={Summaries} />
-            <Route path="/timesheet" component={TimeSheetHome} />
-            <Route path="/profile" component={Profile} />
-            <Route path="/not-found" component={NotFound} />
-            <Redirect from="/" exact to="/summary" />
-            <Redirect to="/not-found"/>
+            <Route exact path={["/", "/login"]} component={LogIn} />
+            {!this.state.user && <Redirect to='/login' />}
+
+
+            <Route>
+                <NavBar />
+                  <main className="container">
+                      <Route exact path="/summary" component={Summaries} />
+                      <Route exact path="/timesheet" component={TimeSheetHome} />
+                      <Route exact path="/profile" component={Profile} />
+                      <Route exact path="/not-found" component={NotFound} />
+                
+                      {/* <Redirect to="/not-found" /> */}
+                  </main>
+            </Route>
+                  
+          
+            
           </Switch>
-        </main>
-      </React.Fragment>
+        </div>
+      </div>
     );
   }
 
