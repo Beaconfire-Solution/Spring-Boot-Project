@@ -52,9 +52,9 @@ function TimeSheetHome(props) {
         if (props.profile.remainingVacationDay == 0){
             setVacationCheck(false);
         }
-        // if (props.profile.remainingFloatingDay <= floatingDayCount){
-        //     setFloatingDayCheck(false);
-        // }
+        if (props.profile.remainingFloatingDay < floatingDayCount){
+            setFloatingDayCheck(false);
+        }
         
         const calculateTotalHours = ()=>{
             let totalBillingHours = 0;
