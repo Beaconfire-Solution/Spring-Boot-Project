@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import { Link, NavLink, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
-
+import { getTimesheetSummary, getUserProfile } from '../../action/action'
 
 
 class NavBar extends Component  {
@@ -17,6 +17,15 @@ class NavBar extends Component  {
     window.location.href='http://localhost:3000/beaconfire';
   }
 
+  componentDidMount() {
+    let id = window.sessionStorage.getItem("userID")
+    console.log("in nav  " + id)
+    if (id) {
+      this.props.getUserProfile(id)
+    }
+      
+  } 
+
   render() {
     return (
       <Navbar>
@@ -27,8 +36,7 @@ class NavBar extends Component  {
             </Link>
           </Nav.Item>
           
-
-          <Nav.Item>
+          {window.sessionStorage.getItem("userID") &&<Nav.Item>
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div className="navbar-nav">
                 <NavLink className="nav-item nav-link" to="/summary">
@@ -43,7 +51,9 @@ class NavBar extends Component  {
               </div>
             </div>
             
-          </Nav.Item>
+          </Nav.Item>}
+          
+          
 
           <Nav.Item></Nav.Item>
           <Nav.Item></Nav.Item>
@@ -55,9 +65,12 @@ class NavBar extends Component  {
 
           
           <Nav.Item>
-            <button className="btn btn-outline-secondary" onClick={ (e) => this.logout(e)}> 
+            {window.sessionStorage.getItem("userID")&&<button className="btn btn-outline-secondary" onClick={ (e) => this.logout(e)}> 
               LOG OUT AS {this.props.username}
             </button>
+            
+            }
+            
           </Nav.Item>
           
           
@@ -76,6 +89,13 @@ const mapStateToProps = (state) => {
         username : state.username
     }
 }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getTimesheetSummary: (userID) => dispatch(getTimesheetSummary(userID)),
+        getUserProfile : (userID) => dispatch(getUserProfile(userID))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
 
 
-export default connect(mapStateToProps)(NavBar);

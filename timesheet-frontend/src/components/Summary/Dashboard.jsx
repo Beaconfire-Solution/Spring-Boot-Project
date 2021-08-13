@@ -8,21 +8,24 @@ import Profile from '../Profile/profile';
 
 
 class Dashboard extends Component {
-    render() { 
+    render() {
+        console.log("dashboard, current url  "+ window.location)
         return (
             <div>
                 <NavBar />
+                 
                 <main className="container">
-                    <Route exact path={["/"]} component={Summaries} />
-                    <Route exact path={ ["/summary"]} component={Summaries} />
-                      <Route path="/timesheet" component={TimeSheetHome} />
-                      <Route path="/profile" component={Profile} />
-                      <Route path="/not-found" component={NotFound} />
-                
-                      {/* <Redirect to="/not-found" /> */}
+                    <Switch>   
+                        <Route path="/summary" component={Summaries} />
+                        <Route path="/timesheet" component={TimeSheetHome} />
+                        <Route path="/profile" component={Profile} />
+                        <Route path="/not-found" component={NotFound} />
+                        <Redirect from="/" to="/summary" />
+                        <Redirect to="/not-found" />
+                    </Switch>
                 </main>
+                
             </div>
-            
          );
     }
 }
