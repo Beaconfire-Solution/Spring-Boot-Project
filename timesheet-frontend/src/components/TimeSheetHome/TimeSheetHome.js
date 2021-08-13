@@ -326,7 +326,7 @@ function TimeSheetHome(props) {
                         //         return value
                         // }}
                         >
-                        <MenuItem value="">{weekEndingFormatter(props.selectedWeek.weekEnding)}</MenuItem>
+                        <MenuItem value="">{props.selectedWeek.weekEnding && weekEndingFormatter(props.selectedWeek.weekEnding)}</MenuItem>
                         {timesheetList && timesheetList.map((week, index) => (
                             <MenuItem value={week.weeklyTimesheets.weekEnding}>{weekEndingFormatter(week.weeklyTimesheets.weekEnding)}</MenuItem>
                         ))}
@@ -364,7 +364,7 @@ function TimeSheetHome(props) {
             <Grid container direction="row" alignItems="center" spacing={10} justifyContent="flex-end">
                 <Grid item>
                     <Button variant="contained" color="primary" onClick={handleResetBoxes} disabled={isApproved}>
-                        Reset PTA Choices
+                        Reset CheckBoxes
                     </Button>
                 </Grid>
                 <Grid item>
