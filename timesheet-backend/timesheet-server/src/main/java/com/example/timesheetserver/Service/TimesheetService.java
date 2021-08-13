@@ -23,7 +23,7 @@ public class TimesheetService {
     ProfileRepository profileRepository;
 
     public List<Timesheet> findByProfile_Id(String id){
-        return timesheetRepository.findByProfile_Id(id);
+        return timesheetRepository.findByProfile_IdOrderByWeeklyTimesheets_WeekEndingDesc(id);
     }
     public List<Timesheet> findAll(){
         return timesheetRepository.findAll();
