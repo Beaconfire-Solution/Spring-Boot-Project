@@ -26,6 +26,11 @@ function TimeSheetHome(props) {
     const [floatingDayCount, setFloatingCount] = useState(props.profile.remainingFloatingDay);
     const [notify, setNotify] = useState(false);
 
+    const [notify, setNotify] = useState(false);
+
+    const [vacationDayCount, setVacationCount] = useState(props.profile.remainingVacationDay);
+
+
     useEffect(() => {
         
         const getWeeklyTimesheets = () => {
@@ -58,17 +63,24 @@ function TimeSheetHome(props) {
         if (props.profile.remainingFloatingDay < floatingDayCount){
             setFloatingDayCheck(false);
         }
+
+        if (props.profile.remainingVacationDay < vacationDayCount){
+            setVacationCheck(false);
+        }
         
         const calculateTotalHours = ()=>{
             let totalBillingHours = 0;
             let totalCompensatedHours = 0;
             var totalPaidOffDay = 0;
             newTimesheet.dailyTimesheets && newTimesheet.dailyTimesheets.forEach(element => {
-                let timeStart = new Date('01/07/2007 ' + element.startingTime);
-                let timeEnd = new Date('01/07/2007 ' + element.endingTime);
-                let hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
-                hourDiff = hourDiff.toFixed(2);
-                
+                let hourDiff = 0;
+                if (!(element.floatingDay || element.vacation || element.holiday)){
+                    let timeStart = new Date('01/07/2007 ' + element.startingTime);
+                    let timeEnd = new Date('01/07/2007 ' + element.endingTime);
+                    hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
+                    hourDiff = hourDiff.toFixed(2);
+                }
+
                 if (element.floatingDay === true){
                     totalPaidOffDay = ++totalPaidOffDay;
                     console.log(totalPaidOffDay);
@@ -103,7 +115,6 @@ function TimeSheetHome(props) {
     }
 
     function postWeeklyTimesheet(){
-        console.log(newTimesheet.document.type);
         setNotify(true);
         ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
         // console.log(props.profile.remainingFloatingDay);
@@ -137,6 +148,9 @@ function TimeSheetHome(props) {
         },
         label: {
             backgroundColor: "white"
+        },
+        control: {
+            padding: theme.spacing(2)
         }
       }));
     const classes = useStyles();
@@ -218,6 +232,12 @@ function TimeSheetHome(props) {
         let row = {...changedTimesheet[index]};
         row.vacation = e.target.checked;
         changedTimesheet[index] = row;
+        if (e.target.checked === true){
+            setVacationCount(vacationDayCount+1);
+        }
+        else if (e.target.checked === false){
+            setVacationCount(vacationDayCount-1);
+        }
         setNewTimesheet({
             ...newTimesheet,
             dailyTimesheets: changedTimesheet});
@@ -231,6 +251,7 @@ function TimeSheetHome(props) {
         setNewTimesheet({
             ...newTimesheet,
             dailyTimesheets: changedTimesheet});
+        
     }
 
     function setDocumentType(e){
@@ -263,6 +284,17 @@ function TimeSheetHome(props) {
         
         setNewTimesheet(selectedWeek[0].weeklyTimesheets);
         console.log(selectedWeek[0].weeklyTimesheets);
+    }
+
+    function handleResetBoxes(){
+        let changedTimesheet = [...newTimesheet.dailyTimesheets];
+        changedTimesheet.forEach(element => {
+            element.floatingDay = false;
+            element.vacation = false;
+        })
+        setNewTimesheet({
+            ...newTimesheet,
+            dailyTimesheets: changedTimesheet});
     }
 
     return (
@@ -325,15 +357,29 @@ function TimeSheetHome(props) {
             </div>
             <br></br>
             <br></br>
-            <Grid container direction="row" alignItems="center" justifyContent="flex-end">
+            <Grid container direction="row" alignItems="center" spacing={10} justifyContent="flex-end">
+                <Grid item>
+                    <Button variant="contained" color="primary" onClick={handleResetBoxes} disabled={isApproved}>
+                        Reset PTA Choices
+                    </Button>
+                </Grid>
+                <Grid item>
                     <Button variant="contained" color="primary" onClick={postTemplate} disabled={!isValid}>
-                        Set Default
+                        Set Default <div>&nbsp;</div>
+                        <Tooltip title="Save daily hours as default; future weekly timesheet will show same hours">
+                        <span>
+                            <FaInfoCircle />
+                        </span> 
+                    </Tooltip>
                     </Button>
                     <Tooltip title="Save daily hours as default; future weekly timesheet will show same hours">
                         <span>
                             <FaInfoCircle />
                         </span> 
                     </Tooltip>
+
+                </Grid>
+
             </Grid>
             <br></br>
             <br></br>
@@ -397,8 +443,7 @@ function TimeSheetHome(props) {
                             </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
-                                {/* {newTimesheet.totalBillingHours} */}
-                                {totalHoursCalc(row.startingTime, row.endingTime)}
+                                {(row.holiday || row.vacation || row.floatingDay) ? <span>0</span>: totalHoursCalc(row.startingTime, row.endingTime)}
                             
                         </TableCell>
                         <TableCell align="center">
