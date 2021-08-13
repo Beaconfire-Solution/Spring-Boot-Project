@@ -7,6 +7,7 @@ import * as actionTypes from '../../action/actionTypes';
 import TimeSheetHomeCSS from './TimeSheetHome.module.css';
 import * as ApiService from '../../services/ApiService';
 import { format, set } from 'date-fns';
+import { getUserProfile } from '../../action/action'
 
 
 function TimeSheetHome(props) {
@@ -51,9 +52,9 @@ function TimeSheetHome(props) {
         if (props.profile.remainingVacationDay == 0){
             setVacationCheck(false);
         }
-        if (props.profile.remainingFloatingDay <= floatingDayCount){
-            setFloatingDayCheck(false);
-        }
+        // if (props.profile.remainingFloatingDay <= floatingDayCount){
+        //     setFloatingDayCheck(false);
+        // }
         
         const calculateTotalHours = ()=>{
             let totalBillingHours = 0;
@@ -83,6 +84,7 @@ function TimeSheetHome(props) {
                 totalBillingHours: totalBillingHours.toFixed(2),
                 totalCompensatedHours: totalCompensatedHours.toFixed(2)});
         }
+        props.getUserProfile(userId);
         calculateTotalHours();
 
     },[newTimesheet.weekEnding, newTimesheet.dailyTimesheets])
@@ -93,9 +95,9 @@ function TimeSheetHome(props) {
     }
 
     function postWeeklyTimesheet(){
-        // ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
-        console.log(props.profile.remainingFloatingDay);
-        console.log(floatingDayCount);
+        ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
+        // console.log(props.profile.remainingFloatingDay);
+        // console.log(floatingDayCount);
     }
 
     const uploadDocument = () => {
@@ -466,8 +468,9 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch) => {
     return {
         // postTemplate: () => dispatch({type: actionTypes.POST_TIMESHEET_TEMPLATE}),
-        editTimesheet: (payload) => dispatch({type: actionTypes.EDIT_TIMESHEET, payload}),
-        getWeeklyTimesheets: (payload) => dispatch({type: actionTypes.GET_WEEKLYTIMESHEETS, payload})
+        // editTimesheet: (payload) => dispatch({type: actionTypes.EDIT_TIMESHEET, payload}),
+        // getWeeklyTimesheets: (payload) => dispatch({type: actionTypes.GET_WEEKLYTIMESHEETS, payload}),
+        getUserProfile : (userID) => dispatch(getUserProfile(userID))
     }
 }
 
