@@ -148,6 +148,9 @@ function TimeSheetHome(props) {
         },
         control: {
             padding: theme.spacing(2)
+        },
+        menuPaper: {
+            maxHeight: 250
         }
       }));
     const classes = useStyles();
@@ -315,6 +318,7 @@ function TimeSheetHome(props) {
                         onChange={(e)=> handleWeekChange(e)}
                         // value={selectedWeek}
                         displayEmpty
+                        MenuProps={{ classes: { paper: classes.menuPaper } }}
                         // renderValue={(value)=> { 
                         //     if (value === undefined) 
                         //         return newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)
