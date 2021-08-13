@@ -13,7 +13,8 @@ class Dashboard extends Component {
             <div>
                 <NavBar />
                 <main className="container">
-                    <Route path={ ["/", "/summary"]} component={Summaries} />
+                    <Route exact path={["/"]} component={Summaries} />
+                    <Route exact path={ ["/summary"]} component={Summaries} />
                       <Route path="/timesheet" component={TimeSheetHome} />
                       <Route path="/profile" component={Profile} />
                       <Route path="/not-found" component={NotFound} />
