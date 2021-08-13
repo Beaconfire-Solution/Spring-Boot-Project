@@ -65,23 +65,25 @@ function TimeSheetHome(props) {
                 let timeEnd = new Date('01/07/2007 ' + element.endingTime);
                 let hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
                 hourDiff = hourDiff.toFixed(2);
-                if (element.isFloatingDay === true){
+                
+                if (element.floatingDay === true){
                     totalPaidOffDay = ++totalPaidOffDay;
                     console.log(totalPaidOffDay);
                 }
-                if (element.isVacationDay === true){
+                if (element.vacation === true){
                     totalPaidOffDay = ++totalPaidOffDay;
                     console.log(totalPaidOffDay);
                 }
-                if (element.isHoliday === true){
+                if (element.holiday=== true){
                     totalPaidOffDay = ++totalPaidOffDay;
                     console.log(totalPaidOffDay);
                 }
                 totalBillingHours = totalBillingHours + parseFloat(hourDiff);
-                totalCompensatedHours = totalBillingHours + totalPaidOffDay*8;
+                totalCompensatedHours = totalBillingHours + totalPaidOffDay * 8;
+                
             });
-            console.log(totalBillingHours);
-            console.log(totalPaidOffDay);
+            console.log("in the end total bill  "+ totalBillingHours);
+            console.log("in the end total paid off" +totalPaidOffDay);
             setNewTimesheet({
                 ...newTimesheet,
                 totalBillingHours: totalBillingHours.toFixed(2),
