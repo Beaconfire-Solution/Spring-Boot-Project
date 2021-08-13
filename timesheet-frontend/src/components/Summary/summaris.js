@@ -162,7 +162,7 @@ class Summaries extends Component {
                                 <td>
                                     <td>{this.showComment(week)}</td>
                                     <td>
-                                        {(week.weeklyTimesheets.floatingDayUsed || this.props.profile.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
+                                        {(week.weeklyTimesheets.floatingDayUsed || week.weeklyTimesheets.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
                                             <span>
                                                 <FaInfoCircle />
                                             </span> 
@@ -197,7 +197,7 @@ class Summaries extends Component {
                                 <td>
                                     <td>{this.showComment(week)}</td>
                                     <td>
-                                        {(week.weeklyTimesheets.floatingDayUsed || this.props.profile.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
+                                        {(week.weeklyTimesheets.floatingDayUsed || week.weeklyTimesheets.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
                                             <span>
                                                 <FaInfoCircle />
                                             </span> 
