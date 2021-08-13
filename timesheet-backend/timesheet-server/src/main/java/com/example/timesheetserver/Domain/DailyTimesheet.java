@@ -23,9 +23,9 @@ public class DailyTimesheet {
 
     private String endingTime;
 
-    private boolean isFloatingDay;
+    private boolean floatingDay;
 
-    private boolean isHoliday;
+    private boolean holiday;
 
-    private boolean isVacation;
+    private boolean vacation;
 }
