@@ -15,19 +15,18 @@ class App extends Component {
   constructor(props) {
     super(props)
     const queryString = window.location.search;
-    
-      console.log("has no JWT in session")
-        const urlParams = new URLSearchParams(queryString);
-        const JWT = urlParams.get('JWT')
-        const ID = urlParams.get('ID')
-        this.JWT = JWT
-        console.log("get JWT  ")
-        console.log(JWT)
-        console.log(ID)
-        window.sessionStorage.setItem("JWT", JWT)
-        window.sessionStorage.setItem("userID", ID)
-    
-        
+    const urlParams = new URLSearchParams(queryString);
+    const from = urlParams.get('from')
+    console.log("from "+from)
+    if (from === "auth") {
+      const JWT = urlParams.get('JWT')
+      const ID = urlParams.get('ID')
+      window.sessionStorage.setItem("JWT", JWT)
+      window.sessionStorage.setItem("userID", ID)
+      console.log("get JWT  ")
+      console.log(JWT)
+      console.log(ID)
+    } 
   }
 
   state = {
@@ -41,7 +40,7 @@ class App extends Component {
     console.log("current  JWT " + curJWT)
     console.log("current ID   " + curID)
     console.log(typeof curJWT)
-    if (curJWT==='null' && curID==='null') {
+    if (!curJWT &&!curID) {
         console.log("no user")
         return WelcomePage
     }
@@ -59,8 +58,9 @@ class App extends Component {
             {/* <Route exact path={["/", "/login"]} component={LogIn} /> */}
             {/* {!this.state.user && goLogin()} */}
             {/* {window.sessionStorage.getItem("userID") && } */}
-            <Route path="/beaconfire" component={ WelcomePage} />
+            
             <Route path="/" component={this.checkLogIn()} />
+            <Route path="/beaconfire" component={ WelcomePage} />
 {/* 
             {
               window.sessionStorage.getItem("userID") ? (

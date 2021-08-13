@@ -19,7 +19,7 @@ class Summaries extends Component {
         this.state = {
             userID : window.sessionStorage.getItem("userID"),
             currentWeeklyTimesheets: [],
-            tableSize: 3,
+            tableSize: 5,
             showAll: false,
             showSubmissionTag: false,
             floatingDayUsed: 0,
@@ -78,8 +78,7 @@ class Summaries extends Component {
 
     showComment = (week) => {
         let floatingDayUsed = week.weeklyTimesheets.floatingDayUsed;
-        // let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; // need to be changed!!
-        let vacationDayUsed = 2;
+        let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; 
         return <table><tbody>
             <tr>
                 {floatingDayUsed != 0 && floatingDayUsed + " Floating Day Required"}
