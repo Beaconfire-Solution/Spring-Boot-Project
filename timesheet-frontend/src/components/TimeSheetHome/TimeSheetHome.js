@@ -438,7 +438,7 @@ function TimeSheetHome(props) {
                             </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
-                                {(row.holiday || row.vacation || row.floatingDay) ? <span>0</span>: totalHoursCalc(row.startingTime, row.endingTime)}
+                                {(row.holiday || row.vacation || row.floatingDay) ? <span>0.00</span>: totalHoursCalc(row.startingTime, row.endingTime)}
                             
                         </TableCell>
                         <TableCell align="center">
