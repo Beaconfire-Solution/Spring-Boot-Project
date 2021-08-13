@@ -20,7 +20,7 @@ class Dashboard extends Component {
                         <Route path="/timesheet" component={TimeSheetHome} />
                         <Route path="/profile" component={Profile} />
                         <Route path="/not-found" component={NotFound} />
-                        <Redirect from="/" to="/summary" />
+                        <Redirect exact from="/" to="/summary" />
                         <Redirect to="/not-found" />
                     </Switch>
                 </main>
