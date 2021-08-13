@@ -37,8 +37,8 @@ function Profile(props) {
         setContact({ ...contact, [prop]: event.target.value});
       };
 
-    function testChange(){
-        ApiService.postProfile(contact);
+    function testChange(userId){
+        ApiService.postProfile(contact, userId);
     }
 
     const uploadDocument = () => {
