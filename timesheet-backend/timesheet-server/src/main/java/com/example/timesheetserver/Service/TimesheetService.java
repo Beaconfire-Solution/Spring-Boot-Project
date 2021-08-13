@@ -32,34 +32,41 @@ public class TimesheetService {
     public void updateTimesheet(String id, Timesheets weeklyTimesheets){
         String weekEnding = weeklyTimesheets.getWeekEnding();
         Timesheet timesheet = timesheetRepository.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
-            Optional<Profile> opt = profileRepository.findById(id);
+        Optional<Profile> opt = profileRepository.findById(id);
+        int floatingDayUsed = timesheet.getWeeklyTimesheets().getFloatingDayUsed();
+        int vacationDayUse = timesheet.getWeeklyTimesheets().getVacationDayUse();
             for(int i = 0; i < timesheet.getWeeklyTimesheets().getDailyTimesheets().size(); i++){
                 if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isFloatingDay() == true && weeklyTimesheets.getDailyTimesheets().get(i).isFloatingDay() == false){
+                    floatingDayUsed -= 1;
                     opt.ifPresent(profile -> {
                         profile.setRemainingFloatingDay(profile.getRemainingFloatingDay() + 1);
                         profileRepository.save(profile);
                     });
                 }
                 if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isFloatingDay() == false && weeklyTimesheets.getDailyTimesheets().get(i).isFloatingDay() == true){
+                    floatingDayUsed += 1;
                     opt.ifPresent(profile -> {
                         profile.setRemainingFloatingDay(profile.getRemainingFloatingDay() - 1);
                         profileRepository.save(profile);
                     });
                 }
                 if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isVacation() == false && weeklyTimesheets.getDailyTimesheets().get(i).isVacation() == true){
+                    vacationDayUse += 1;
                     opt.ifPresent(profile -> {
                         profile.setRemainingVacationDay(profile.getRemainingVacationDay() - 1);
                         profileRepository.save(profile);
                     });
                 }
                 if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isVacation() == true && weeklyTimesheets.getDailyTimesheets().get(i).isVacation() == false){
+                    vacationDayUse -= 1;
                     opt.ifPresent(profile -> {
                         profile.setRemainingVacationDay(profile.getRemainingVacationDay() + 1);
                         profileRepository.save(profile);
                     });
                 }
             }
-
+            timesheet.getWeeklyTimesheets().setFloatingDayUsed(floatingDayUsed);
+            timesheet.getWeeklyTimesheets().setVacationDayUse(vacationDayUse);
             if(weeklyTimesheets.getDocument().getUrl() != null){
                 if(weeklyTimesheets.getDocument().getType().equals("Approved")){
                     timesheet.getWeeklyTimesheets().setSubmissionStatus("complete");
