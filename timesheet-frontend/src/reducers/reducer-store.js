@@ -12,7 +12,7 @@ const initialState = {
     summaryTimesheets: [],
     profile: Object,
     currentWeeklyTimesheets: [],
-    tableSize: 3,
+    tableSize: 5,
     username:''
 }
 
