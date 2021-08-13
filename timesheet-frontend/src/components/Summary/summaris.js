@@ -79,14 +79,14 @@ class Summaries extends Component {
     showComment = (week) => {
         let floatingDayUsed = week.weeklyTimesheets.floatingDayUsed;
         let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; 
-        return <table><tbody>
-            <tr>
-                {floatingDayUsed != 0 && floatingDayUsed + " Floating Day Required"}
-                </tr> 
-            <tr>
-                {vacationDayUsed != 0 && vacationDayUsed + " Vacation Day Required"}
-            </tr>
-        </tbody></table>
+        return <td>
+            
+                {floatingDayUsed !== 0 && floatingDayUsed + " Floating Day Required"}
+                <div></div>
+                {vacationDayUsed !== 0 && vacationDayUsed + " Vacation Day Required"}
+            
+        </td>
+            
     } 
 
     tagTextComment = (week) => {
@@ -99,17 +99,11 @@ class Summaries extends Component {
         </td>
     }
 
-    showCommentFloatingDay = (week) => {
-        return <div>
-            {this.showComment(week)}
-            {this.showComment(week) !== '' &&
-                <Tooltip title={this.tagTextComment(week)}>
-                    <span>
-                        <FaInfoCircle />
-                    </span> 
-                </Tooltip>
-            }
-        </div>    
+    showCommentIcon = (week) => {
+        if (week.weeklyTimesheets.floatingDayUsed || week.weeklyTimesheets.vacationDayUse)
+            return <Tooltip title={this.tagTextComment(week)}><span><FaInfoCircle />
+                                            </span> 
+                                        </Tooltip>
     }
 
     handlePageChange = (page) => {
@@ -161,16 +155,7 @@ class Summaries extends Component {
                                 <td>{this.optionTags(week)}</td>
                                 <td>
                                     <td>{this.showComment(week)}</td>
-                                    <td>
-                                        {(week.weeklyTimesheets.floatingDayUsed || week.weeklyTimesheets.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
-                                            <span>
-                                                <FaInfoCircle />
-                                            </span> 
-                                        </Tooltip>
-                                        }
-                                    </td>
-                                    
-                                    
+                                    <td>{this.showCommentIcon(week)}</td>
                                 </td>
                             </tr>
                         
@@ -196,16 +181,7 @@ class Summaries extends Component {
                                 <td>{this.optionTags(week)}</td>
                                 <td>
                                     <td>{this.showComment(week)}</td>
-                                    <td>
-                                        {(week.weeklyTimesheets.floatingDayUsed || week.weeklyTimesheets.vacationDayUse)&&<Tooltip title={this.tagTextComment(week)}>
-                                            <span>
-                                                <FaInfoCircle />
-                                            </span> 
-                                        </Tooltip>
-                                        }
-                                    </td>
-                                    
-                                    
+                                    <td>{this.showCommentIcon(week)}</td>
                                 </td>
                             </tr>
                         
