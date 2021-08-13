@@ -51,18 +51,17 @@ function TimeSheetHome(props) {
         if (newTimesheet.approvedStatus === "Approved"){
             setApproved(true);
         }
-        if (props.profile.remainingFloatingDay == 0){
+        if (props.profile.remainingFloatingDay == 0 || floatingDayCount <=0){
             setFloatingDayCheck(false);
         }
-        if (props.profile.remainingVacationDay == 0){
+        else {
+            setFloatingDayCheck(true);
+        }
+        if (props.profile.remainingVacationDay == 0 || vacationDayCount <= 0){
             setVacationCheck(false);
         }
-        if (props.profile.remainingFloatingDay < floatingDayCount){
-            setFloatingDayCheck(false);
-        }
-
-        if (props.profile.remainingVacationDay < vacationDayCount){
-            setVacationCheck(false);
+        else {
+            setVacationCheck(true);
         }
         
         const calculateTotalHours = ()=>{
@@ -94,8 +93,8 @@ function TimeSheetHome(props) {
                 totalCompensatedHours = totalBillingHours + totalPaidOffDay * 8;
                 
             });
-            console.log("in the end total bill  "+ totalBillingHours);
-            console.log("in the end total paid off" +totalPaidOffDay);
+            // console.log("in the end total bill  "+ totalBillingHours);
+            // console.log("in the end total paid off" +totalPaidOffDay);
             setNewTimesheet({
                 ...newTimesheet,
                 totalBillingHours: totalBillingHours.toFixed(2),
@@ -103,6 +102,7 @@ function TimeSheetHome(props) {
         }
         props.getUserProfile(userId);
         calculateTotalHours();
+        console.log(newTimesheet);
 
     },[newTimesheet.weekEnding, newTimesheet.dailyTimesheets])
 
@@ -213,10 +213,10 @@ function TimeSheetHome(props) {
         row.floatingDay = e.target.checked;
         changedTimesheet[index] = row;
         if (e.target.checked === true){
-            setFloatingCount(floatingDayCount+1);
+            setFloatingCount(floatingDayCount-1);
         }
         else if (e.target.checked === false){
-            setFloatingCount(floatingDayCount-1);
+            setFloatingCount(floatingDayCount+1);
         }
 
         setNewTimesheet({
@@ -230,10 +230,10 @@ function TimeSheetHome(props) {
         row.vacation = e.target.checked;
         changedTimesheet[index] = row;
         if (e.target.checked === true){
-            setVacationCount(vacationDayCount+1);
+            setVacationCount(vacationDayCount-1);
         }
         else if (e.target.checked === false){
-            setVacationCount(vacationDayCount-1);
+            setVacationCount(vacationDayCount+1);
         }
         setNewTimesheet({
             ...newTimesheet,
@@ -289,6 +289,8 @@ function TimeSheetHome(props) {
             element.floatingDay = false;
             element.vacation = false;
         })
+        setVacationCount(props.profile.remainingVacationDay);
+        setFloatingCount(props.profile.remainingFloatingDay);
         setNewTimesheet({
             ...newTimesheet,
             dailyTimesheets: changedTimesheet});
@@ -399,7 +401,7 @@ function TimeSheetHome(props) {
                         <TableCell align="center">{dateFormatter(row.date)}
                         </TableCell>
                         <TableCell align="center">
-                        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
+                        {(row.holiday || row.vacation || row.floatingDay) ? <span>N/A</span>: 
                         <TextField
                                     id="time"
                                     type="time"
@@ -412,11 +414,12 @@ function TimeSheetHome(props) {
                                     step: 300, // 5 min
                                     }}
                                     disabled={isApproved}
-                            />
+                            />}
                         {/* <KeyboardTimePicker value={row.startingTime} mask="__:__ _M" onChange={(e)=>handleStartingTimeChange(index, e)} minutesStep={30} /> */}
                         {/* </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
+                            {(row.holiday || row.vacation || row.floatingDay) ? <span>N/A</span>: 
                             <TextField
                                     id="time"
                                     type="time"
@@ -429,13 +432,13 @@ function TimeSheetHome(props) {
                                     step: 300, // 5 min
                                     }}
                                     disabled={isApproved}
-                            />
+                            />}
                             {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <KeyboardTimePicker mask="__:__ _M" value={row.endingTime} onChange={(e)=>handleEndingTimeChange(index, e)} minutesStep={30} />
                             </MuiPickersUtilsProvider> */}
                         </TableCell>
                         <TableCell align="center">
-                                {(row.holiday || row.vacation || row.floatingDay) ? <span>0</span>: totalHoursCalc(row.startingTime, row.endingTime)}
+                                {(row.holiday || row.vacation || row.floatingDay) ? <span>0.00</span>: totalHoursCalc(row.startingTime, row.endingTime)}
                             
                         </TableCell>
                         <TableCell align="center">
@@ -498,7 +501,7 @@ function TimeSheetHome(props) {
                 </Grid>
                 </Grid>
                 <Grid container direction="row" alignItems="center" justifyContent="flex-end">
-                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet} disabled={!isValid}>
+                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet, uploadDocument} disabled={!isValid}>
                         Save
                     </Button>
                 </Grid>
