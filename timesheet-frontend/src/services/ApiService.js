@@ -23,7 +23,7 @@ export function getProfile(userID) {
 
 }
 
-export function postProfile(contact){
+export function postProfile(contact, userID){
     return axios.post('http://localhost:11000/profile/' + userID, contact)
 }
 

@@ -37,7 +37,7 @@ function Profile(props) {
         setContact({ ...contact, [prop]: event.target.value});
       };
 
-    function testChange(userId){
+    function testChange(){
         ApiService.postProfile(contact, userId);
     }
 
