@@ -17,7 +17,7 @@ function Profile(props) {
     const [name, setName] = useState('Zack');
     const [emc, setEmc] = useState([])
     const [selectedDocument, setDocument] = useState(null);
-    const [userId, setUserId] = useState('61101603d0ca8600cd04d961');
+    const [userId, setUserId] = useState(window.sessionStorage.getItem("userID"));
     const [imageurl, setImageurl] = useState('http://www.gravatar.com/avatar/?d=mp')
 
     useEffect(() => {
