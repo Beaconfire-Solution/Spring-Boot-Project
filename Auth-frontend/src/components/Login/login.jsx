@@ -74,12 +74,13 @@ class LogIn extends Component {
         if (this.state.message === 'You have successfully Logged In!') {
             let token = window.sessionStorage.getItem("JWTToken")
             let id = window.sessionStorage.getItem("userID")
-            window.location.href = "http://localhost:3000?JWT=" + token + "&ID=" + id;
+            window.location.href = "http://localhost:3000/summary?JWT=" + token + "&ID=" + id + "&from=auth";
         };
     };
 
 
     render() {
+        console.log("login info" +this.state.username)
         return (
             <div>
                 <Navbar>
@@ -118,7 +119,7 @@ class LogIn extends Component {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => {
+                                    onClick={() => {
                                     this.signIn({"username" : this.state.username, "password": this.state.password});
                                 }}
                             >
