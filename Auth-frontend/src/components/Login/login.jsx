@@ -90,7 +90,7 @@ class LogIn extends Component {
                             <img src='https://www.linkpicture.com/q/Logo_BeaconFire.png' type="image" padding='10px' />
                             </Link>
                         </Nav.Item>
-                        <Nav.Item>Auth</Nav.Item>
+                        <Nav.Item></Nav.Item>
                     </nav>
                 </Navbar>
 
