@@ -7,7 +7,8 @@ import { convertISO_to_Date } from '../../services/dateConverter';
 import { Tooltip } from '@material-ui/core';
 import Pagination from './pagination';
 import { paginate } from '../utils/paginate';
-import { SummaryCss} from './summary.module.css'
+import { SummaryCss} from './summary.module.css';
+import * as actionTypes from '../../action/actionTypes';
 
 
 class Summaries extends Component {
@@ -18,7 +19,7 @@ class Summaries extends Component {
         this.state = {
             userID : window.sessionStorage.getItem("userID"),
             currentWeeklyTimesheets: [],
-            tableSize: 5,
+            tableSize: 3,
             showAll: false,
             showSubmissionTag: false,
             floatingDayUsed: 0,
@@ -55,10 +56,16 @@ class Summaries extends Component {
     optionTags = (week) => {
         let selectedWeek = convertISO_to_Date(week.weeklyTimesheets.weekEnding)
         let option = week.weeklyTimesheets.approvedStatus === "Approved" ? "view" : "edit"
-        let url = "timesheet?weekEnding="+ selectedWeek + '/' + option;
-        return <Link to={ url}>{ option}</Link>
+        let url = "timesheet";
+
+        return <Link to={ url} onClick={()=> this.setSelectedWeek(week)}>{ option}</Link>
     }
 
+    setSelectedWeek = (week) => {
+        let selectedWeek = week.weeklyTimesheets;
+        this.props.setSelectedWeek(selectedWeek);
+        console.log(selectedWeek);
+    }
 
     tagTextSubmission = (week) => {
         const status = week.weeklyTimesheets.submissionStatus; 
@@ -71,8 +78,8 @@ class Summaries extends Component {
 
     showComment = (week) => {
         let floatingDayUsed = week.weeklyTimesheets.floatingDayUsed;
-        let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; // need to be changed!!
-        
+        // let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; // need to be changed!!
+        let vacationDayUsed = 2;
         return <table><tbody>
             <tr>
                 {floatingDayUsed != 0 && floatingDayUsed + " Floating Day Required"}
@@ -224,14 +231,16 @@ const mapStateToProps = (state) => {
     return {
         timesheetSummaries: state.summaryTimesheets,
         currentWeeklyTimesheets :state.currentWeeklyTimesheets,
-        profile : state.profile
+        profile : state.profile,
+        selectedWeek: state.selectedWeek
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getTimesheetSummary: (userID) => dispatch(getTimesheetSummary(userID)),
-        getUserProfile : (userID) => dispatch(getUserProfile(userID))
+        getUserProfile : (userID) => dispatch(getUserProfile(userID)),
+        setSelectedWeek: (payload) => dispatch({type: actionTypes.SET_SELECTED_WEEK, payload})
     }
 }
 

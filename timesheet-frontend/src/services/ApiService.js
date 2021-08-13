@@ -12,8 +12,8 @@ export function fetchAllTimesheets(userID){
 }
 
 // send a new template to set as default in the future
-export function postTemplate(template){
-    return axios.post('https://2f610c95-42e2-4af7-8779-f43307fa47ed.mock.pstmn.io', template)
+export function postTemplate(userID, template){
+    return axios.post('http://localhost:10000/timesheet/template/' + userID, template)
 
 }
 
@@ -28,8 +28,8 @@ export function postProfile(contact){
 }
 
 //update the current weekly timesheet
-export function postWeeklyTimesheet(weeklyTimesheet){
-    return axios.post('https://080dc608-fead-4169-9690-0bc109ef0a63.mock.pstmn.io', weeklyTimesheet)
+export function postWeeklyTimesheet(userID, weeklyTimesheet){
+    return axios.post('http://localhost:10000/timesheet/timesheets/' + userID, weeklyTimesheet)
 }
 
 

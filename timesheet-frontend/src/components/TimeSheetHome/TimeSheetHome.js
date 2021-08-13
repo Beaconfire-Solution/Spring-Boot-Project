@@ -12,7 +12,7 @@ import { format, set } from 'date-fns';
 function TimeSheetHome(props) {
 
     const [isValid, setValid] = useState(true);
-    const [newTimesheet, setNewTimesheet] = useState([]);
+    const [newTimesheet, setNewTimesheet] = useState(props.selectedWeek);
     const [isApproved, setApproved] = useState(false);
     const [floatingDayCheck, setFloatingDayCheck] = useState(true);
     const [vacationCheck, setVacationCheck] = useState(true);
@@ -20,6 +20,7 @@ function TimeSheetHome(props) {
     const [userId, setUserId] = useState(window.sessionStorage.getItem("userID"));
     const [timesheetList, setTimesheetList] = useState([]);
     const [selectedWeek, setSelectedWeek] = useState("");
+    const [floatingDayCount, setFloatingCount] = useState(0);
 
     useEffect(() => {
         
@@ -34,14 +35,14 @@ function TimeSheetHome(props) {
             // }
             // else {
                 setTimesheetList(props.timesheetList);
-                setNewTimesheet(props.timesheetList[22].weeklyTimesheets);
+                // setNewTimesheet(props.timesheetList[22].weeklyTimesheets);
             // }
 
         }
         getWeeklyTimesheets();
 
         console.log(newTimesheet.approvedStatus);
-        if (newTimesheet.approvedStatus === "N/A"){
+        if (newTimesheet.approvedStatus === "Approved"){
             setApproved(true);
         }
         if (props.profile.remainingFloatingDay == 0){
@@ -49,6 +50,9 @@ function TimeSheetHome(props) {
         }
         if (props.profile.remainingVacationDay == 0){
             setVacationCheck(false);
+        }
+        if (props.profile.remainingFloatingDay <= floatingDayCount){
+            setFloatingDayCheck(false);
         }
         
         const calculateTotalHours = ()=>{
@@ -76,12 +80,12 @@ function TimeSheetHome(props) {
             console.log(totalCompensatedHours);
             setNewTimesheet({
                 ...newTimesheet,
-                totalBillingHours: totalBillingHours,
-                totalCompensatedHours: totalCompensatedHours});
+                totalBillingHours: totalBillingHours.toFixed(2),
+                totalCompensatedHours: totalCompensatedHours.toFixed(2)});
         }
         calculateTotalHours();
 
-    },[newTimesheet.weekEnding])
+    },[newTimesheet.weekEnding, newTimesheet.dailyTimesheets])
 
     function postTemplate(){
         console.log("Sending Request");
@@ -89,12 +93,14 @@ function TimeSheetHome(props) {
     }
 
     function postWeeklyTimesheet(){
-        ApiService.postWeeklyTimesheet(newTimesheet);
+        // ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
+        console.log(props.profile.remainingFloatingDay);
+        console.log(floatingDayCount);
     }
 
     const uploadDocument = () => {
         console.log(newTimesheet);
-        // ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
+        ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
     }
 
     const handleFileInput = (e) => {
@@ -183,6 +189,13 @@ function TimeSheetHome(props) {
         let row = {...changedTimesheet[index]};
         row.floatingDay = e.target.checked;
         changedTimesheet[index] = row;
+        if (e.target.checked === true){
+            setFloatingCount(floatingDayCount+1);
+        }
+        else if (e.target.checked === false){
+            setFloatingCount(floatingDayCount-1);
+        }
+
         setNewTimesheet({
             ...newTimesheet,
             dailyTimesheets: changedTimesheet});
@@ -327,7 +340,7 @@ function TimeSheetHome(props) {
                         <TableCell component="th" scope="row">
                             {row.day}
                         </TableCell>
-                        <TableCell align="center">{row.date}
+                        <TableCell align="center">{dateFormatter(row.date)}
                         </TableCell>
                         <TableCell align="center">
                         {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
@@ -412,14 +425,14 @@ function TimeSheetHome(props) {
                 <Grid item>
                 
                     <TextField select variant="outlined" className={classes.formControlMed} defaultValue="" placeholder="hello" 
-                        onChange={setDocumentType} label="Document Approval Status" InputLabelProps={{
+                        onChange={(e)=>setDocumentType(e)} label="Document Approval Status" InputLabelProps={{
                             classes: {
                                 root: classes.label
                             }
                         }}
                     >
-                        <MenuItem value="Approved Timesheet">Approved Timesheet</MenuItem>
-                        <MenuItem value="Unapproved Timesheet">Unapproved Timesheet</MenuItem>
+                        <MenuItem value="approved timesheet">Approved Timesheet</MenuItem>
+                        <MenuItem value="unapproved timesheet">Unapproved Timesheet</MenuItem>
                     
                     </TextField>
                 </Grid>
@@ -430,7 +443,7 @@ function TimeSheetHome(props) {
                 </Grid>
                 </Grid>
                 <Grid container direction="row" alignItems="center" justifyContent="flex-end">
-                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet, uploadDocument} disabled={!isValid}>
+                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet} disabled={!isValid}>
                         Save
                     </Button>
                 </Grid>
@@ -446,6 +459,7 @@ const mapStateToProps = (state)=>{
         weeklyTimesheets: state.weeklyTimesheets,
         timesheetList: state.summaryTimesheets,
         profile : state.profile,
+        selectedWeek: state.selectedWeek
     }
 }
 

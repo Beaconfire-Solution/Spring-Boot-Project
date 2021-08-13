@@ -9,5 +9,7 @@ export const GET_WEEKLYTIMESHEETS = 'weeklyTimesheets/get';
 export const GET_USER_ID = 'userID/get';
 export const SET_USER_ID = 'userID/set';
 
+export const SET_SELECTED_WEEK = 'timesheet/week';
+
 
 export const GET_PROFILE = 'profile/get';

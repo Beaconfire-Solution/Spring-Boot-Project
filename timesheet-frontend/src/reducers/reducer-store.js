@@ -12,8 +12,9 @@ const initialState = {
     summaryTimesheets: [],
     profile: Object,
     currentWeeklyTimesheets: [],
-    tableSize: 5,
-    username:''
+    tableSize: 3,
+    username:'',
+    selectedWeek:{}
 }
 
 // const setWeeklyTimesheet = (state) => {
@@ -24,6 +25,13 @@ const setWeeklyTimesheet = (state, action) => {
     return {
         ...state,
         weeklyTimesheets: action.payload
+    }
+}
+
+const setSelectedWeek = (state, action) => {
+    return {
+        ...state,
+        selectedWeek: action.payload
     }
 }
 
@@ -87,11 +95,13 @@ export default function appReducer(state = initialState, action) {
         case actionTypes.GET_WEEKLYTIMESHEETS:
             return setWeeklyTimesheet(state, action);
         case actionTypes.GET_PROFILE:
-            return getProfile(state, action)
+            return getProfile(state, action);
         // case actionTypes.SET_USER_ID:
         //     return setId(state, action)
         // case actionTypes.GET_USER_ID:
         //     return 
+        case actionTypes.SET_SELECTED_WEEK:
+            return setSelectedWeek(state, action);
 
         default:
             return state;
