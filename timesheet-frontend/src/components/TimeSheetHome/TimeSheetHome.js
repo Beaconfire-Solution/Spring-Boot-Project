@@ -314,7 +314,7 @@ function TimeSheetHome(props) {
                         defaultValue={selectedWeek}
                         onChange={(e)=> handleWeekChange(e)}
                         // value={selectedWeek}
-                        // displayEmpty
+                        displayEmpty
                         // renderValue={(value)=> { 
                         //     if (value === undefined) 
                         //         return newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)
@@ -322,6 +322,7 @@ function TimeSheetHome(props) {
                         //         return value
                         // }}
                         >
+                        <MenuItem value="">{weekEndingFormatter(props.selectedWeek.weekEnding)}</MenuItem>
                         {timesheetList && timesheetList.map((week, index) => (
                             <MenuItem value={week.weeklyTimesheets.weekEnding}>{weekEndingFormatter(week.weeklyTimesheets.weekEnding)}</MenuItem>
                         ))}
