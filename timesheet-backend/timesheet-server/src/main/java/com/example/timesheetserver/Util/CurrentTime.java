@@ -25,6 +25,7 @@ public class CurrentTime {
         HolidayManager m = HolidayManager.getInstance(HolidayCalendar.UNITED_STATES);
         Set<Holiday> holidays = m.getHolidays(2021, "ny");
         for(Holiday h: holidays){
+            System.out.println(h);
             if(currentDay.equals(String.valueOf(h.getDate()))){
                 return true;
             }
@@ -36,42 +37,56 @@ public class CurrentTime {
         for(DailyTimesheet dailyTimesheet: template){
             if(dailyTimesheet.getDay().equals("Sunday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-6, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-6, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Monday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-5, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-5, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Tuesday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-4, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-4, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Wednesday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-3, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-3, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Thursday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-2, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-2, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Friday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(-1, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(-1, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
             }
             if(dailyTimesheet.getDay().equals("Saturday")){
                 dailyTimesheet.setDate(CurrentTime.generateDayByCurrentIso(0, currentTime));
+                dailyTimesheet.setHoliday(false);
+                dailyTimesheet.setFloatingDay(false);
                 if(compareDay(CurrentTime.generateDayByCurrent(0, currentTime))){
                     dailyTimesheet.setHoliday(true);
                 }
@@ -112,7 +127,7 @@ public class CurrentTime {
 
         date = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy-MM-dd'T'HH:mm:sss'Z'");
+        sdf.applyPattern("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
 
 
         return sdf.format(date);

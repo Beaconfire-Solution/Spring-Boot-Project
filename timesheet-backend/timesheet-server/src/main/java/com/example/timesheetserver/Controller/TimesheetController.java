@@ -69,14 +69,14 @@ public class TimesheetController {
     }
 
     @CrossOrigin
-    @PutMapping("/timesheets/{id}")
+    @PostMapping("/timesheets/{id}")
     public ResponseEntity updateTimesheet(@PathVariable String id, @RequestBody Timesheets weeklyTimesheets){
         timesheetService.updateTimesheet(id, weeklyTimesheets);
         return ResponseEntity.ok("Save Succeed!");
     }
 
     @CrossOrigin
-    @PutMapping("/template/{id}")
+    @PostMapping("/template/{id}")
     public ResponseEntity updateTemplate(@PathVariable String id, @RequestBody List<DailyTimesheet> template){
         profileService.updateTemplate(id, template);
         return ResponseEntity.ok("Update Succeed!");

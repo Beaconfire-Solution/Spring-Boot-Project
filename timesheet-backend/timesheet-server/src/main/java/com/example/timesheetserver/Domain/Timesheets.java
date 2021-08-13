@@ -17,9 +17,9 @@ public class Timesheets {
 
     private String weekEnding;
 
-    private int totalCompensatedHours;
+    private float totalCompensatedHours;
 
-    private int totalBillingHours;
+    private float totalBillingHours;
 
     private String submissionStatus;
 

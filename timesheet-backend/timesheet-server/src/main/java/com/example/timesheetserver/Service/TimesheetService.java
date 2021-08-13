@@ -1,6 +1,9 @@
 package com.example.timesheetserver.Service;
 
+import com.example.timesheetserver.DAO.ProfileRepository;
 import com.example.timesheetserver.DAO.TimesheetRepository;
+import com.example.timesheetserver.Domain.DailyTimesheet;
+import com.example.timesheetserver.Domain.Profile;
 import com.example.timesheetserver.Domain.Timesheet;
 import com.example.timesheetserver.Domain.Timesheets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ public class TimesheetService {
     @Autowired
     TimesheetRepository timesheetRepository;
 
+    @Autowired
+    ProfileRepository profileRepository;
+
     public List<Timesheet> findByProfile_Id(String id){
         return timesheetRepository.findByProfile_Id(id);
     }
@@ -24,24 +30,38 @@ public class TimesheetService {
     }
 
     public void updateTimesheet(String id, Timesheets weeklyTimesheets){
-        Optional<Timesheet> opt = timesheetRepository.findById(id);
-        opt.ifPresent(ts -> {
-            Timesheets weeklyTimesheets1 = ts.getWeeklyTimesheets();
+        String weekEnding = weeklyTimesheets.getWeekEnding();
+        Timesheet timesheet = timesheetRepository.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
+            Optional<Profile> opt = profileRepository.findById(id);
+
+            for(DailyTimesheet dailyTimesheet: timesheet.getWeeklyTimesheets().getDailyTimesheets()){
+                if(dailyTimesheet.isFloatingDay()){
+                    opt.ifPresent(profile -> {
+                        profile.setRemainingFloatingDay(profile.getRemainingFloatingDay() - 1);
+                        profileRepository.save(profile);
+                    });
+                }
+                if(dailyTimesheet.isVacation()){
+                    opt.ifPresent(profile -> {
+                        profile.setRemainingVacationDay(profile.getRemainingVacationDay() - 1);
+                        profileRepository.save(profile);
+                    });
+                }
+            }
+
             if(weeklyTimesheets.getDocument().getUrl() != null){
                 if(weeklyTimesheets.getDocument().getType().equals("Approved")){
-                    weeklyTimesheets1.setSubmissionStatus("complete");
+                    timesheet.getWeeklyTimesheets().setSubmissionStatus("complete");
                 }
-                weeklyTimesheets1.setSubmissionStatus("Incomplete");
+                timesheet.getWeeklyTimesheets().setSubmissionStatus("Incomplete");
             }
             else{
-                weeklyTimesheets1.setSubmissionStatus("Incomplete");
+                timesheet.getWeeklyTimesheets().setSubmissionStatus("Incomplete");
             }
 
-            weeklyTimesheets1.setDailyTimesheets(weeklyTimesheets.getDailyTimesheets());
+            timesheet.getWeeklyTimesheets().setDailyTimesheets(weeklyTimesheets.getDailyTimesheets());
 
-            ts.setWeeklyTimesheets(weeklyTimesheets1);
-            timesheetRepository.save(ts);
-        });
+            timesheetRepository.save(timesheet);
     }
 
     public Timesheet findByProfile_IdAndWeeklyTimesheets_WeekEnding(String id, String weekEnding){

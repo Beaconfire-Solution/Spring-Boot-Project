@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export function openTimesheetFrontend() {
-    return axios.post('http://localhost:10203/auth/login', loginInfo, {
+    return axios.post('http://localhost:10203/auth/login', {
         headers: {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "X-Requested-With"
