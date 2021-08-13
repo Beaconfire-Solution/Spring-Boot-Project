@@ -2,16 +2,19 @@
 import React, { Component } from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import { Link, NavLink, Redirect } from "react-router-dom";
+import { connect } from 'react-redux';
 
 
 
 class NavBar extends Component  {
 
-  logout = () => {
+  logout = (e) => {
+    e.preventDefault();
     console.log("remove")
     window.sessionStorage.removeItem("user");
     window.sessionStorage.removeItem("userID");
-
+    window.sessionStorage.removeItem("JWT");
+    window.location.href='http://localhost:3000/beaconfire';
   }
 
   render() {
@@ -52,8 +55,8 @@ class NavBar extends Component  {
 
           
           <Nav.Item>
-            <button href = "/login" className="btn btn-outline-secondary" onClick={ this.logout}> 
-              <Link to="/login" style={{ textDecoration: 'none', color: '#807c7c' }}>LOG OUT AS { window.sessionStorage.getItem("user")}</Link>
+            <button className="btn btn-outline-secondary" onClick={ (e) => this.logout(e)}> 
+              LOG OUT AS {this.props.username}
             </button>
           </Nav.Item>
           
@@ -67,4 +70,12 @@ class NavBar extends Component  {
 }
   
 
-export default NavBar;
+
+const mapStateToProps = (state) => {
+    return {
+        username : state.username
+    }
+}
+
+
+export default connect(mapStateToProps)(NavBar);

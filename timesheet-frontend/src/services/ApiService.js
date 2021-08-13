@@ -65,6 +65,11 @@ export function login(loginInfo) {
     })
 }
 
+export function goLogin() {
+    console.log("go to log in")
+     window.location.href = "http://localhost:3001"
+}
+
 export function uploadAvatar(file){
     let formData = new FormData();
     formData.append("file", file);

@@ -6,15 +6,49 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Redirect, Switch} from "react-router-dom";
-import NavBar from './components/navbar/navbar';
-import Summaries from "./components/Summary/summaris";
-import NotFound from "./components/Summary/notFound";
-import LogIn from "./components/Login/login";
+import { goLogin } from './services/ApiService'
+import WelcomePage from "./components/Summary/welcomePage";
+import Dashboard from "./components/Summary/Dashboard";
 
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    const queryString = window.location.search;
+    
+      console.log("has no JWT in session")
+        const urlParams = new URLSearchParams(queryString);
+        const JWT = urlParams.get('JWT')
+        const ID = urlParams.get('ID')
+        this.JWT = JWT
+        console.log("get JWT  ")
+        console.log(JWT)
+        console.log(ID)
+        window.sessionStorage.setItem("JWT", JWT)
+        window.sessionStorage.setItem("userID", ID)
+    
+        
+  }
+
   state = {
     user : window.sessionStorage.getItem("user")
+  }
+
+
+  checkLogIn = () => {
+    let curJWT = window.sessionStorage.getItem("JWT")
+    let curID = window.sessionStorage.getItem("userID")
+    console.log("current  JWT " + curJWT)
+    console.log("current ID   " + curID)
+    console.log(typeof curJWT)
+    if (curJWT==='null' && curID==='null') {
+        console.log("no user")
+        return WelcomePage
+    }
+        
+    console.log("yes user")
+    
+    return Dashboard
   }
 
   render() {
@@ -22,27 +56,30 @@ class App extends Component {
       <div>
         <div>
           <Switch>
-            <Route exact path={["/", "/login"]} component={LogIn} />
-            {!this.state.user && <Redirect to='/login' />}
+            {/* <Route exact path={["/", "/login"]} component={LogIn} /> */}
+            {/* {!this.state.user && goLogin()} */}
+            {/* {window.sessionStorage.getItem("userID") && } */}
+            <Route path="/beaconfire" component={ WelcomePage} />
+            <Route path="/" component={this.checkLogIn()} />
+{/* 
+            {
+              window.sessionStorage.getItem("userID") ? (
+                  <Route>
+                    <Dashboard></Dashboard>
+                  </Route>
+              ): (
+                  <WelcomePage/>
+              )
+            } */}
 
-
-            <Route>
-                <NavBar />
-                  <main className="container">
-                      <Route exact path="/summary" component={Summaries} />
-                      <Route exact path="/timesheet" component={TimeSheetHome} />
-                      <Route exact path="/profile" component={Profile} />
-                      <Route exact path="/not-found" component={NotFound} />
-                
-                      {/* <Redirect to="/not-found" /> */}
-                  </main>
-            </Route>
-                  
-          
+           
             
           </Switch>
         </div>
       </div>
+    
+
+      
     );
   }
 

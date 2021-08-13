@@ -56,6 +56,7 @@ class LogIn extends Component {
                 });
                 window.sessionStorage.setItem("user", this.state.username);
                 window.sessionStorage.setItem("userID", this.state.userID);
+                window.sessionStorage.setItem("JWTToken", this.state.JWTToken);
             } else {
                 this.setState({
                     open: true,
@@ -71,7 +72,9 @@ class LogIn extends Component {
             open: false
         });
         if (this.state.message === 'You have successfully Logged In!') {
-            window.location.href = "/summary"
+            let token = window.sessionStorage.getItem("JWTToken")
+            let id = window.sessionStorage.getItem("userID")
+            window.location.href = "http://localhost:3000?JWT=" + token + "&ID=" + id;
         };
     };
 
@@ -86,6 +89,7 @@ class LogIn extends Component {
                             <img src='https://www.linkpicture.com/q/Logo_BeaconFire.png' type="image" padding='10px' />
                             </Link>
                         </Nav.Item>
+                        <Nav.Item>Auth</Nav.Item>
                     </nav>
                 </Navbar>
 

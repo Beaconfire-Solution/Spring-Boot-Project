@@ -13,6 +13,7 @@ const initialState = {
     profile: Object,
     currentWeeklyTimesheets: [],
     tableSize: 3,
+    username:''
 }
 
 // const setWeeklyTimesheet = (state) => {
@@ -63,7 +64,8 @@ const getTimesheetSummary = (state, action) => {
 const getProfile = (state, action) => {
     return {
         ...state,
-        profile: action.payload
+        profile: action.payload,
+        username: action.payload.name
     }
 }
 

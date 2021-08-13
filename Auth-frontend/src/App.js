@@ -3,7 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import { Route, Redirect, Switch} from "react-router-dom";
+import { Route, Redirect, Switch, useParams} from "react-router-dom";
 import NotFound from "./components/Summary/notFound";
 import LogIn from "./components/Login/login";
 
@@ -18,7 +18,7 @@ class App extends Component {
       <div>
         <div>
           <Switch>
-            <Route exact path={["/", "/login"]} component={LogIn} />
+            <Route path={["/", "/login"]} component={LogIn} />
             {!this.state.user && <Redirect to='/login' />}
             <Route path="/not-found" Component={NotFound}/>
             <Redirect to="/not-found"/>

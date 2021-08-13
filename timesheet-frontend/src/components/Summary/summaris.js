@@ -29,6 +29,7 @@ class Summaries extends Component {
 
     async componentDidMount() {
         await this.props.getTimesheetSummary(this.state.userID)
+        await this.props.getUserProfile(this.state.userID)
         // this.setState({ currentWeeklyTimesheets: this.props.timesheetSummaries.slice(0, this.state.tableSize) });
     } 
 
@@ -69,18 +70,18 @@ class Summaries extends Component {
         let floatingDayUsed = week.weeklyTimesheets.floatingDayUsed;
         // let vacationDayUsed = week.weeklyTimesheets.vacationDayUse; // need to be changed!!
         let vacationDayUsed = 2;
-        return <td>
+        return <table><tbody>
             <tr>
                 {floatingDayUsed != 0 && floatingDayUsed + " Floating Day Required"}
-            </tr>
+                </tr> 
             <tr>
                 {vacationDayUsed != 0 && vacationDayUsed + " Vacation Day Required"}
             </tr>
-        </td>
+        </tbody></table>
     } 
 
     tagTextComment = (week) => {
-        this.props.getUserProfile(this.state.userID)
+        
         const remainingFloatingDay = this.props.profile.remainingFloatingDay;
         const remainingVacationDay = this.props.profile.remainingVacationDay;
         return <td>
@@ -121,7 +122,43 @@ class Summaries extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.currentWeeklyTimesheets.map(week => (
+                        {!this.state.showAll && this.props.currentWeeklyTimesheets.map(week => (
+                            <tr key={week.id}>
+                                <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
+                                <td>{week.weeklyTimesheets.totalBillingHours}</td>
+                                <td>
+                                    <span>{week.weeklyTimesheets.submissionStatus}</span> <span></span>
+                                    {week.weeklyTimesheets.submissionStatus === "Incomplete" &&
+                                        <Tooltip title={this.tagTextSubmission(week)}>
+                                            <span>
+                                                <FaInfoCircle />
+                                            </span> 
+                                        </Tooltip>
+                                        }
+                                    
+                                </td>
+                                <td>{week.weeklyTimesheets.approvedStatus}</td>
+                                <td>{this.optionTags(week)}</td>
+                                <td>
+                                    <td>{this.showComment(week)}</td>
+                                    <td>
+                                        {this.showComment(week) !== '' &&
+                                        <Tooltip title={this.tagTextComment(week)}>
+                                            <span>
+                                                <FaInfoCircle />
+                                            </span> 
+                                        </Tooltip>
+                                        }
+                                    </td>
+                                    
+                                    
+                                </td>
+                            </tr>
+                        
+                        ))}
+                    
+
+                {this.state.showAll && this.props.timesheetSummaries.map(week => (
                             <tr key={week.id}>
                                 <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
                                 <td>{week.weeklyTimesheets.totalBillingHours}</td>
@@ -157,8 +194,9 @@ class Summaries extends Component {
                         ))}
                     </tbody>
                 </table>
+
                 <div className="text-center">
-                    {this.state.currentWeeklyTimesheets.length!==0&&<button type="button" className="btn btn-light" onClick={() => this.changeToShowMoreOrLess()}>{this.showMoreTag()}</button>}
+                    {this.props.currentWeeklyTimesheets.length!==0&&<button type="button" className="btn btn-light" onClick={() => this.changeToShowMoreOrLess()}>{this.showMoreTag()}</button>}
                 </div>
                 
                 
