@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as actionTypes from '../../action/actionTypes';
 import TimeSheetHomeCSS from './TimeSheetHome.module.css';
 import * as ApiService from '../../services/ApiService';
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 
 
 function TimeSheetHome(props) {
@@ -17,31 +17,75 @@ function TimeSheetHome(props) {
     const [floatingDayCheck, setFloatingDayCheck] = useState(true);
     const [vacationCheck, setVacationCheck] = useState(true);
     const [selectedDocument, setDocument] = useState(null);
-    const [userId, setUserId] = useState('61101603d0ca8600cd04d961');
+    const [userId, setUserId] = useState(window.sessionStorage.getItem("userID"));
+    const [timesheetList, setTimesheetList] = useState([]);
+    const [selectedWeek, setSelectedWeek] = useState("");
 
     useEffect(() => {
         
         const getWeeklyTimesheets = () => {
-            setUserId(window.sessionStorage.getItem("userID"));
-            ApiService.fetchAllTimesheets(userId)
-            .then((response)=>{
-                //console.log(response);
-                props.getWeeklyTimesheets(response.data[6].weeklyTimesheets);
-                setNewTimesheet(props.weeklyTimesheets);
-                //console.log(newTimesheet);
-            })
+            // if (props.timesheetList.length === 0){
+            //     ApiService.fetchAllTimesheets(userId)
+            //     .then((response)=>{
+            //         props.getWeeklyTimesheets(response.data[22].weeklyTimesheets);
+            //         setNewTimesheet(props.weeklyTimesheets);
+            //     })
+            //     setTimesheetList(props.timesheetList);
+            // }
+            // else {
+                setTimesheetList(props.timesheetList);
+                setNewTimesheet(props.timesheetList[22].weeklyTimesheets);
+            // }
+
         }
         getWeeklyTimesheets();
-        //console.log(newTimesheet.approvedStatus);
+
+        console.log(newTimesheet.approvedStatus);
         if (newTimesheet.approvedStatus === "N/A"){
             setApproved(true);
         }
+        if (props.profile.remainingFloatingDay == 0){
+            setFloatingDayCheck(false);
+        }
+        if (props.profile.remainingVacationDay == 0){
+            setVacationCheck(false);
+        }
         
+        const calculateTotalHours = ()=>{
+            let totalBillingHours = 0;
+            let totalCompensatedHours = 0;
+            let totalPaidOffDay = 0;
+            newTimesheet.dailyTimesheets && newTimesheet.dailyTimesheets.forEach(element => {
+                let timeStart = new Date('01/07/2007 ' + element.startingTime);
+                let timeEnd = new Date('01/07/2007 ' + element.endingTime);
+                let hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
+                hourDiff = hourDiff.toFixed(2);
+                if (element.isFloatingDay === true){
+                    totalPaidOffDay++;
+                }
+                if (element.isVacationDay === true){
+                    totalPaidOffDay++;
+                }
+                if (element.isHoliday === true){
+                    totalPaidOffDay++;
+                }
+                totalBillingHours = totalBillingHours + parseFloat(hourDiff);
+                totalCompensatedHours = totalBillingHours + totalPaidOffDay*8;
+            });
+            console.log(totalBillingHours);
+            console.log(totalCompensatedHours);
+            setNewTimesheet({
+                ...newTimesheet,
+                totalBillingHours: totalBillingHours,
+                totalCompensatedHours: totalCompensatedHours});
+        }
+        calculateTotalHours();
 
-    },newTimesheet.weekEnding)
+    },[newTimesheet.weekEnding])
 
     function postTemplate(){
-        ApiService.postTemplate(newTimesheet.dailyTimesheets);
+        console.log("Sending Request");
+        ApiService.postTemplate(userId, newTimesheet.dailyTimesheets).then((response)=> console.log(response));
     }
 
     function postWeeklyTimesheet(){
@@ -49,7 +93,8 @@ function TimeSheetHome(props) {
     }
 
     const uploadDocument = () => {
-        ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
+        console.log(newTimesheet);
+        // ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
     }
 
     const handleFileInput = (e) => {
@@ -172,15 +217,29 @@ function TimeSheetHome(props) {
         });
     }
 
+    // 2021-05-12T00:00:000Z
+
     function dateFormatter(date){
+        console.log(date);
         return format(new Date(date), 'yyyy/MM/dd')
     }
 
     function weekEndingFormatter(weekEnding){
+
         return format(new Date(weekEnding), 'dd MMMM yyyy')
     }
 
-    // add mode edit/view
+
+    function handleWeekChange(e){
+        setSelectedWeek(e.target.value);
+        const selectedWeek = timesheetList.filter(obj => {
+            return obj.weeklyTimesheets.weekEnding === e.target.value;
+        })
+        
+        setNewTimesheet(selectedWeek[0].weeklyTimesheets);
+        console.log(selectedWeek[0].weeklyTimesheets);
+    }
+
     return (
         <div className={TimeSheetHomeCSS.container}>
             <div>
@@ -195,18 +254,21 @@ function TimeSheetHome(props) {
                     <Select
                         labelId="demo-simple-select-filled-label"
                         id="demo-simple-select-filled"
-                        value={newTimesheet.weekEnding}
-                        displayEmpty
-                        renderValue={(value)=> { 
-                            if (value === undefined) 
-                                return newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)
-                            else
-                                return value
-                        }}
+                        defaultValue={selectedWeek}
+                        onChange={(e)=> handleWeekChange(e)}
+                        // value={selectedWeek}
+                        // displayEmpty
+                        // renderValue={(value)=> { 
+                        //     if (value === undefined) 
+                        //         return newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)
+                        //     else
+                        //         return value
+                        // }}
                         >
-                        <MenuItem value={newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)}>{newTimesheet.weekEnding && weekEndingFormatter(newTimesheet.weekEnding)}</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {timesheetList && timesheetList.map((week, index) => (
+                            <MenuItem value={week.weeklyTimesheets.weekEnding}>{weekEndingFormatter(week.weeklyTimesheets.weekEnding)}</MenuItem>
+                        ))}
+                        
                     </Select>
                 </FormControl>
                 <TextField
@@ -265,7 +327,7 @@ function TimeSheetHome(props) {
                         <TableCell component="th" scope="row">
                             {row.day}
                         </TableCell>
-                        <TableCell align="center">{dateFormatter(row.date)}
+                        <TableCell align="center">{row.date}
                         </TableCell>
                         <TableCell align="center">
                         {/* <MuiPickersUtilsProvider utils={DateFnsUtils}> */}
@@ -349,7 +411,7 @@ function TimeSheetHome(props) {
                 >
                 <Grid item>
                 
-                    <TextField select variant="outlined" className={classes.formControlMed} placeholder="hello" 
+                    <TextField select variant="outlined" className={classes.formControlMed} defaultValue="" placeholder="hello" 
                         onChange={setDocumentType} label="Document Approval Status" InputLabelProps={{
                             classes: {
                                 root: classes.label
@@ -382,12 +444,14 @@ const mapStateToProps = (state)=>{
         curr_timesheet: state.curr_timeSheet,
         timesheetTemplate: state.timesheetTemplate,
         weeklyTimesheets: state.weeklyTimesheets,
+        timesheetList: state.summaryTimesheets,
+        profile : state.profile,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        postTemplate: () => dispatch({type: actionTypes.POST_TIMESHEET_TEMPLATE}),
+        // postTemplate: () => dispatch({type: actionTypes.POST_TIMESHEET_TEMPLATE}),
         editTimesheet: (payload) => dispatch({type: actionTypes.EDIT_TIMESHEET, payload}),
         getWeeklyTimesheets: (payload) => dispatch({type: actionTypes.GET_WEEKLYTIMESHEETS, payload})
     }
