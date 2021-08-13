@@ -33,17 +33,28 @@ public class TimesheetService {
         String weekEnding = weeklyTimesheets.getWeekEnding();
         Timesheet timesheet = timesheetRepository.findByProfile_IdAndWeeklyTimesheets_WeekEnding(id, weekEnding);
             Optional<Profile> opt = profileRepository.findById(id);
-
-            for(DailyTimesheet dailyTimesheet: timesheet.getWeeklyTimesheets().getDailyTimesheets()){
-                if(dailyTimesheet.isFloatingDay()){
+            for(int i = 0; i < timesheet.getWeeklyTimesheets().getDailyTimesheets().size(); i++){
+                if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isFloatingDay() == true && weeklyTimesheets.getDailyTimesheets().get(i).isFloatingDay() == false){
+                    opt.ifPresent(profile -> {
+                        profile.setRemainingFloatingDay(profile.getRemainingFloatingDay() + 1);
+                        profileRepository.save(profile);
+                    });
+                }
+                if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isFloatingDay() == false && weeklyTimesheets.getDailyTimesheets().get(i).isFloatingDay() == true){
                     opt.ifPresent(profile -> {
                         profile.setRemainingFloatingDay(profile.getRemainingFloatingDay() - 1);
                         profileRepository.save(profile);
                     });
                 }
-                if(dailyTimesheet.isVacation()){
+                if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isVacation() == false && weeklyTimesheets.getDailyTimesheets().get(i).isVacation() == true){
                     opt.ifPresent(profile -> {
                         profile.setRemainingVacationDay(profile.getRemainingVacationDay() - 1);
+                        profileRepository.save(profile);
+                    });
+                }
+                if(timesheet.getWeeklyTimesheets().getDailyTimesheets().get(i).isVacation() == true && weeklyTimesheets.getDailyTimesheets().get(i).isVacation() == false){
+                    opt.ifPresent(profile -> {
+                        profile.setRemainingVacationDay(profile.getRemainingVacationDay() + 1);
                         profileRepository.save(profile);
                     });
                 }

@@ -27,7 +27,7 @@ public class Timesheets {
 
     private int floatingDayUsed;
 
-    private int vacationDayUse;
+    private int vacationDayUsed;
 
     private int holidayUsed;
 
