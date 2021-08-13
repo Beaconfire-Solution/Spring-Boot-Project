@@ -25,9 +25,6 @@ function TimeSheetHome(props) {
     const [selectedWeek, setSelectedWeek] = useState("");
     const [floatingDayCount, setFloatingCount] = useState(props.profile.remainingFloatingDay);
     const [notify, setNotify] = useState(false);
-
-    const [notify, setNotify] = useState(false);
-
     const [vacationDayCount, setVacationCount] = useState(props.profile.remainingVacationDay);
 
 
