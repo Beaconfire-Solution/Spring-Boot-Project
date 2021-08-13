@@ -21,7 +21,7 @@ function TimeSheetHome(props) {
     const [userId, setUserId] = useState(window.sessionStorage.getItem("userID"));
     const [timesheetList, setTimesheetList] = useState([]);
     const [selectedWeek, setSelectedWeek] = useState("");
-    const [floatingDayCount, setFloatingCount] = useState(0);
+    const [floatingDayCount, setFloatingCount] = useState(props.profile.remainingFloatingDay);
 
     useEffect(() => {
         
@@ -59,26 +59,29 @@ function TimeSheetHome(props) {
         const calculateTotalHours = ()=>{
             let totalBillingHours = 0;
             let totalCompensatedHours = 0;
-            let totalPaidOffDay = 0;
+            var totalPaidOffDay = 0;
             newTimesheet.dailyTimesheets && newTimesheet.dailyTimesheets.forEach(element => {
                 let timeStart = new Date('01/07/2007 ' + element.startingTime);
                 let timeEnd = new Date('01/07/2007 ' + element.endingTime);
                 let hourDiff = (timeEnd - timeStart) / 60 / 60 / 1000;
                 hourDiff = hourDiff.toFixed(2);
                 if (element.isFloatingDay === true){
-                    totalPaidOffDay++;
+                    totalPaidOffDay = ++totalPaidOffDay;
+                    console.log(totalPaidOffDay);
                 }
                 if (element.isVacationDay === true){
-                    totalPaidOffDay++;
+                    totalPaidOffDay = ++totalPaidOffDay;
+                    console.log(totalPaidOffDay);
                 }
                 if (element.isHoliday === true){
-                    totalPaidOffDay++;
+                    totalPaidOffDay = ++totalPaidOffDay;
+                    console.log(totalPaidOffDay);
                 }
                 totalBillingHours = totalBillingHours + parseFloat(hourDiff);
                 totalCompensatedHours = totalBillingHours + totalPaidOffDay*8;
             });
             console.log(totalBillingHours);
-            console.log(totalCompensatedHours);
+            console.log(totalPaidOffDay);
             setNewTimesheet({
                 ...newTimesheet,
                 totalBillingHours: totalBillingHours.toFixed(2),
@@ -95,13 +98,14 @@ function TimeSheetHome(props) {
     }
 
     function postWeeklyTimesheet(){
+        console.log(newTimesheet.document.type);
         ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
         // console.log(props.profile.remainingFloatingDay);
         // console.log(floatingDayCount);
     }
 
     const uploadDocument = () => {
-        console.log(newTimesheet);
+
         ApiService.uploadFile(selectedDocument, newTimesheet.weekEnding);
     }
 
@@ -170,7 +174,7 @@ function TimeSheetHome(props) {
     }
 
     function handleEndingTimeChange(index, e){
-        console.log(e.target.value);
+        // console.log(e.target.value);
         let changedTimesheet = [...newTimesheet.dailyTimesheets];
         let row = {...changedTimesheet[index]};
         row.endingTime = e.target.value;
@@ -235,7 +239,7 @@ function TimeSheetHome(props) {
     // 2021-05-12T00:00:000Z
 
     function dateFormatter(date){
-        console.log(date);
+        // console.log(date);
         return format(new Date(date), 'yyyy/MM/dd')
     }
 

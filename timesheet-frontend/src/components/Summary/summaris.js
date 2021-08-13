@@ -70,7 +70,7 @@ class Summaries extends Component {
     tagTextSubmission = (week) => {
         const status = week.weeklyTimesheets.submissionStatus; 
         const fileType = week.weeklyTimesheets.document.type;
-        if (status !== 'Not Started' && fileType !== 'Approved') {
+        if (status !== 'Not Started' && fileType !== 'approved timesheet') {
             return 'Items due: Proof of Approved TimeSheet'
         } 
         return 'Approval denied by Admin, please contact your HR manager'
