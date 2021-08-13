@@ -69,15 +69,14 @@ public class TimesheetService {
             timesheet.getWeeklyTimesheets().setVacationDayUse(vacationDayUse);
             timesheet.getWeeklyTimesheets().setTotalBillingHours(weeklyTimesheets.getTotalBillingHours());
             timesheet.getWeeklyTimesheets().setTotalCompensatedHours(weeklyTimesheets.getTotalCompensatedHours());
-            if(weeklyTimesheets.getDocument().getUrl() != null){
-                if(weeklyTimesheets.getDocument().getType().equals("Approved")){
-                    timesheet.getWeeklyTimesheets().setSubmissionStatus("complete");
-                }
-                timesheet.getWeeklyTimesheets().setSubmissionStatus("Incomplete");
+            if(weeklyTimesheets.getDocument().getUrl() != null && weeklyTimesheets.getDocument().getType().equals("approved timesheet")){
+                    timesheet.getWeeklyTimesheets().setSubmissionStatus("Complete");
             }
             else{
                 timesheet.getWeeklyTimesheets().setSubmissionStatus("Incomplete");
             }
+
+            timesheet.getWeeklyTimesheets().getDocument().setType(weeklyTimesheets.getDocument().getType());
 
             timesheet.getWeeklyTimesheets().setDailyTimesheets(weeklyTimesheets.getDailyTimesheets());
 
