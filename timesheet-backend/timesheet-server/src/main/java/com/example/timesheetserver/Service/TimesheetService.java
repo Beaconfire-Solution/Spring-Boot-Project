@@ -67,6 +67,8 @@ public class TimesheetService {
             }
             timesheet.getWeeklyTimesheets().setFloatingDayUsed(floatingDayUsed);
             timesheet.getWeeklyTimesheets().setVacationDayUse(vacationDayUse);
+            timesheet.getWeeklyTimesheets().setTotalBillingHours(weeklyTimesheets.getTotalBillingHours());
+            timesheet.getWeeklyTimesheets().setTotalCompensatedHours(weeklyTimesheets.getTotalCompensatedHours());
             if(weeklyTimesheets.getDocument().getUrl() != null){
                 if(weeklyTimesheets.getDocument().getType().equals("Approved")){
                     timesheet.getWeeklyTimesheets().setSubmissionStatus("complete");
