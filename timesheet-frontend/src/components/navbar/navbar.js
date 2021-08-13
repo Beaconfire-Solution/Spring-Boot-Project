@@ -1,13 +1,12 @@
 
 import React, { Component } from "react";
-import { Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar, Container } from "react-bootstrap";
 import { Link, NavLink, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 import { getTimesheetSummary, getUserProfile } from '../../action/action'
 
 
 class NavBar extends Component  {
-
   logout = (e) => {
     e.preventDefault();
     console.log("remove")
@@ -72,9 +71,21 @@ class NavBar extends Component  {
             }
             
           </Nav.Item>
-          
-          
-          <Nav.Item></Nav.Item>
+
+          <Nav.Item>
+            <Container>
+              <Navbar.Brand href="#home">
+                <img
+                  alt=""
+                  src={ this.props.profile.profilePicture}
+                  width="90"
+                  height="90"
+                  className="d-inline-block align-top"
+                />{' '}
+              </Navbar.Brand>
+            </Container>
+            
+          </Nav.Item>
         </nav>
       </Navbar>
       
@@ -86,7 +97,8 @@ class NavBar extends Component  {
 
 const mapStateToProps = (state) => {
     return {
-        username : state.username
+      username: state.username,
+      profile:state.profile
     }
 }
 const mapDispatchToProps = (dispatch) => {

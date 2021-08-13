@@ -24,9 +24,7 @@ function TimeSheetHome(props) {
     const [timesheetList, setTimesheetList] = useState([]);
     const [selectedWeek, setSelectedWeek] = useState("");
     const [floatingDayCount, setFloatingCount] = useState(props.profile.remainingFloatingDay);
-
     const [notify, setNotify] = useState(false);
-
     const [vacationDayCount, setVacationCount] = useState(props.profile.remainingVacationDay);
 
 
@@ -374,9 +372,8 @@ function TimeSheetHome(props) {
                     </Tooltip>
                     </Button>
 
-
-
                 </Grid>
+
             </Grid>
             <br></br>
             <br></br>
