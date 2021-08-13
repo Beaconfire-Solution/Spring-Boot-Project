@@ -24,7 +24,7 @@ export function getProfile(userID) {
 }
 
 export function postProfile(contact){
-    return axios.post('http://localhost:11000/profile/61101603d0ca8600cd04d961', contact)
+    return axios.post('http://localhost:11000/profile/' + userID, contact)
 }
 
 //update the current weekly timesheet
