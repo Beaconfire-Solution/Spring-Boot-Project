@@ -1,13 +1,15 @@
 import {React, useState, useEffect} from 'react';
 import { TextField, Checkbox, Button, makeStyles, TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Paper,
-    InputLabel, MenuItem , FormControl , Select, Grid } from '@material-ui/core';
+    InputLabel, MenuItem , FormControl , Select, Grid, Tooltip } from '@material-ui/core';
 // import { KeyboardTimePicker , MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { connect } from 'react-redux';
 import * as actionTypes from '../../action/actionTypes';
 import TimeSheetHomeCSS from './TimeSheetHome.module.css';
 import * as ApiService from '../../services/ApiService';
 import { format, set } from 'date-fns';
-import { getUserProfile } from '../../action/action'
+import { getUserProfile } from '../../action/action';
+import { FaInfoCircle } from 'react-icons/fa';
+import Alert from '@material-ui/lab/Alert';
 
 
 function TimeSheetHome(props) {
@@ -22,6 +24,7 @@ function TimeSheetHome(props) {
     const [timesheetList, setTimesheetList] = useState([]);
     const [selectedWeek, setSelectedWeek] = useState("");
     const [floatingDayCount, setFloatingCount] = useState(props.profile.remainingFloatingDay);
+    const [notify, setNotify] = useState(false);
 
     useEffect(() => {
         
@@ -101,6 +104,7 @@ function TimeSheetHome(props) {
 
     function postWeeklyTimesheet(){
         console.log(newTimesheet.document.type);
+        setNotify(true);
         ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
         // console.log(props.profile.remainingFloatingDay);
         // console.log(floatingDayCount);
@@ -264,6 +268,7 @@ function TimeSheetHome(props) {
     return (
         <div className={TimeSheetHomeCSS.container}>
             <div>
+            
                 <Grid
                 container
                 direction="row"
@@ -324,6 +329,11 @@ function TimeSheetHome(props) {
                     <Button variant="contained" color="primary" onClick={postTemplate} disabled={!isValid}>
                         Set Default
                     </Button>
+                    <Tooltip title="Save daily hours as default; future weekly timesheet will show same hours">
+                        <span>
+                            <FaInfoCircle />
+                        </span> 
+                    </Tooltip>
             </Grid>
             <br></br>
             <br></br>
@@ -456,6 +466,7 @@ function TimeSheetHome(props) {
                     </Button>
                 </Grid>
             </div>
+            {notify && <Alert onClose={() => {setNotify(false);}}>update saved!</Alert>}
         </div>
     )
 }
