@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { FaInfoCircle } from 'react-icons/fa';
 import { convertISO_to_Date } from '../../services/dateConverter';
 import { Tooltip } from '@material-ui/core';
-
-
+import Pagination from './pagination';
+import { paginate } from '../utils/paginate';
+import { SummaryCss} from './summary.module.css'
 
 
 class Summaries extends Component {
@@ -23,7 +24,9 @@ class Summaries extends Component {
             floatingDayUsed: 0,
             vacationDayUsed: 0,
             remainingFloatingDay: 0,
-            remainingVacationDay: 0
+            remainingVacationDay: 0,
+            pageSize: 10,
+            currentPage:1
         }
     }
 
@@ -103,11 +106,22 @@ class Summaries extends Component {
         </div>    
     }
 
+    handlePageChange = (page) => {
+        this.setState({currentPage:page})
+    }
+
 
     render() {      
         // console.log("before render")
         // console.log(this.props)
         
+        const { length: count } = this.props.timesheetSummaries;
+        const { pageSize, currentPage } = this.state;
+        let weeks = {}
+        if (this.state.showAll && this.props.timesheetSummaries ) {
+            weeks = paginate(this.props.timesheetSummaries, currentPage, pageSize)
+        }
+
         return (
             <div>
                 <table className="table">
@@ -158,7 +172,7 @@ class Summaries extends Component {
                         ))}
                     
 
-                {this.state.showAll && this.props.timesheetSummaries.map(week => (
+                {this.state.showAll && weeks.map(week => (
                             <tr key={week.id}>
                                 <td>{convertISO_to_Date(week.weeklyTimesheets.weekEnding)}</td>
                                 <td>{week.weeklyTimesheets.totalBillingHours}</td>
@@ -193,8 +207,9 @@ class Summaries extends Component {
                         
                         ))}
                     </tbody>
+                    
                 </table>
-
+                {this.state.showAll && <Pagination itemsCount={count} pageSize={pageSize} currentPage={ currentPage} onPageChange={this.handlePageChange }/>}
                 <div className="text-center">
                     {this.props.currentWeeklyTimesheets.length!==0&&<button type="button" className="btn btn-light" onClick={() => this.changeToShowMoreOrLess()}>{this.showMoreTag()}</button>}
                 </div>
