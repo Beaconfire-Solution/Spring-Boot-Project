@@ -115,7 +115,7 @@ function TimeSheetHome(props) {
         setNotify(true);
         ApiService.postWeeklyTimesheet(userId, newTimesheet).then((response)=> console.log(response));
         // console.log(props.profile.remainingFloatingDay);
-        // console.log(floatingDayCount);
+        console.log("Sending to backend");
     }
 
     const uploadDocument = () => {
@@ -501,7 +501,7 @@ function TimeSheetHome(props) {
                 </Grid>
                 </Grid>
                 <Grid container direction="row" alignItems="center" justifyContent="flex-end">
-                    <Button variant="contained" color="primary" onClick={postWeeklyTimesheet, uploadDocument} disabled={!isValid}>
+                    <Button variant="contained" color="primary" onClick={()=>{postWeeklyTimesheet(); uploadDocument();}} disabled={!isValid}>
                         Save
                     </Button>
                 </Grid>
