@@ -369,11 +369,6 @@ function TimeSheetHome(props) {
                         </span> 
                     </Tooltip>
                     </Button>
-                    <Tooltip title="Save daily hours as default; future weekly timesheet will show same hours">
-                        <span>
-                            <FaInfoCircle />
-                        </span> 
-                    </Tooltip>
 
                 </Grid>
 
